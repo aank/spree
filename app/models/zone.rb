@@ -1,5 +1,7 @@
 class Zone < ActiveRecord::Base
   has_many :zone_members
+  has_many :tax_rates
+  
   validates_presence_of :name
   validates_uniqueness_of :name
   after_save :remove_defunct_members
@@ -9,10 +11,13 @@ class Zone < ActiveRecord::Base
   
   #attr_accessor :type
   def kind
-    return "country" unless member = self.members.last
-    return "state" if member.zoneable_type == "State"
-    return "zone" if member.zoneable_type == "Zone"
-    "country"
+    member = self.members.last
+    case member && member.zoneable_type
+    when "State"  then "state"
+    when "Zone"   then "zone"
+    else
+      "country"
+    end
   end   
   
   def kind=(value)

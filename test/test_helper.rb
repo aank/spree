@@ -30,3 +30,28 @@ class TestCouponCalc
     0.99
   end
 end
+
+def stub_zone
+  Zone.any_instance.stubs(:include?).returns(true)
+end
+
+def create_order_with_items
+  @order = Factory(:order)
+  3.times do
+    variant = Factory(:product).variants.first
+    Factory(:line_item, :variant => variant, :order => @order)
+  end
+  
+  @order.line_items.reload
+  @order.update_totals
+end
+
+def create_shipping_method_for(order)
+  @checkout = order.checkout
+  @shipping_method = Factory(:shipping_method)
+  @checkout.shipping_method = @shipping_method
+  @checkout.ship_address = Factory(:address)
+  @checkout.bill_address = Factory(:address)
+  @checkout.save
+  @order.reload
+end
