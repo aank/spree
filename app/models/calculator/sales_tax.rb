@@ -40,10 +40,7 @@ class Calculator::SalesTax < Calculator
 
   def compute(order)
     rate = self.calculable
-    line_items = LineItem.find(:all, {
-        :include => {:variant => :product},
-        :conditions => ["line_items.order_id = ? AND products.tax_category_id = ?", order.id, rate.tax_category_id]
-    })
+    line_items = order.line_items.select { |i| i.product.tax_category == rate.tax_category }
     line_items.inject(0) {|sum, line_item|
       sum += line_item.total * rate.amount
     }
