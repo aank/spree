@@ -25,28 +25,18 @@ module HasCalculator
     end
 	end
 
-	module InstanceMethods
-		def calculator_attributes=(attributes)
-      calculator_type = attributes.delete("calculator_type")
-      if calculator_type
-        if calculator_type == self.calculator.class.name
-          self.calculator.update_attributes(attributes)
-        else
-          self.calculator = calculator_type.constantize.new
-        end
-      end
+	module InstanceMethods     
+    def calculator_type
+      calculator.class.to_s if calculator
     end
 
-    def calculator_attributes
-      attr = self.calculator.attributes
-      self.calculator.preferences.each_pair do |k,v|
-        attr["preferred_#{k}"] = v
-      end
-      attr
-    end
+    def calculator_type=(calculator_type)
+      clazz = calculator_type.constantize if calculator_type
+      self.calculator = clazz.new if clazz and not self.calculator.is_a? clazz
+    end	  
 	end
 
 	def self.included(receiver)
-		receiver.extend         ClassMethods
+		receiver.extend  ClassMethods
 	end
 end

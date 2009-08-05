@@ -39,7 +39,7 @@ class Calculator < ActiveRecord::Base
   end
 
   def to_s
-    self.class.name.titleize
+    self.class.name.titleize.gsub("Calculator\/", "")
   end
 
   def description

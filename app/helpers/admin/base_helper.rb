@@ -214,7 +214,4 @@ module Admin::BaseHelper
     }.join("<br />")
   end
 
-  def calculator_fields(form)
-    render :partial => "admin/shared/calculator_fields", :locals => {:f => form}
-  end
 end
