@@ -12,14 +12,15 @@ class CalculatorsExtension < Spree::Extension
   #   config.gem "gemname-goes-here", :version => '1.2.3'
   # end
   
-  def activate
+  def activate 
     [
       Calculator::FlatPercent,
       Calculator::FlatRate,
       Calculator::FlexiRate,
       Calculator::PerItem,
       Calculator::Shipping,
-      Calculator::Tax,
+      Calculator::SalesTax,
+      Calculator::Vat,
     ].each(&:register)
   end
 end

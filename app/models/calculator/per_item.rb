@@ -5,8 +5,10 @@ class Calculator::PerItem < Calculator
     I18n.t("flat_rate_per_item")
   end
 
-  def self.available?(object)
-    true
+  def self.register
+    super                                
+    Coupon.register_calculator(self)
+    ShippingMethod.register_calculator(self)
   end
 
   def compute(object=nil)

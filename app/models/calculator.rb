@@ -3,13 +3,6 @@ class Calculator < ActiveRecord::Base
 
   # This method must be overriden in concrete calculator.
   #
-  # It should return true if Calculator supports calculations on object (duct typing preffered)
-  def self.available?(object)
-    false
-  end
-
-  # This method must be overriden in concrete calculator.
-  #
   # It should return amount computed based on #calculable and/or optional parameter
   def compute(something=nil)
     raise(NotImplementedError, "please use concrete calculator")
@@ -32,10 +25,6 @@ class Calculator < ActiveRecord::Base
   # If passed nil, will return only general calculators
   def self.calculators
     @@calculators.to_a
-  end
-
-  def self.all_available_for(object)
-    @@calculators.to_a.select{|c| c.available?(object)}
   end
 
   def to_s

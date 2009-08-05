@@ -5,10 +5,12 @@ class Calculator::FlatPercent < Calculator
     I18n.t("flat_percent")
   end
 
-  def self.available?(object)
-    true
+  def self.register
+    super                                
+    Coupon.register_calculator(self)
+    ShippingMethod.register_calculator(self)
   end
-
+  
   def compute(object = nil)
     object ||= self.calculable
 

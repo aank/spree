@@ -1,4 +1,14 @@
 class Calculator::SalesTax < Calculator
+
+  def self.description
+    I18n.t("sales_tax")
+  end
+    
+  def self.register
+    super
+    TaxRate.register_calculator(self)
+  end
+  
   def self.calculate_tax(order, rates)
     ActiveSupport::Deprecation.warn("please use Calculator::SalesTax#compute instead", caller)
 

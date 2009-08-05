@@ -593,5 +593,7 @@ en-US:
   flat_rate_per_order: "Flat Rate (per order)"
   flat_rate_per_item: "Flat Rate (per item)"
   flexible_rate: "Flexible Rate"
-  flat_percent: "Flat Percent"
+  flat_percent: "Flat Percent"                  
+  sales_tax: "Sales Tax"
+  vat: "VAT"
               

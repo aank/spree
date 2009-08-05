@@ -5,10 +5,12 @@ class Calculator::FlatRate < Calculator
     I18n.t("flat_rate_per_order")
   end
 
-  def self.available?(object)
-    true
-  end
-
+  def self.register
+    super                                
+    Coupon.register_calculator(self)
+    ShippingMethod.register_calculator(self)
+  end  
+  
   def compute(object=nil)
     self.preferred_amount
   end  

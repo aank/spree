@@ -1,5 +1,17 @@
 require 'test_helper'
 class VatTaxCalculatorTest < ActiveSupport::TestCase
+  context "Calculator::Vat" do 
+    should "be available to TaxRate" do
+      assert TaxRate.calculators.include?(Calculator::Vat)
+    end
+    should "not be available to ShippingMethod" do
+      assert !Coupon.calculators.include?(Calculator::Vat)
+    end
+    should "not be available to Coupon" do
+      assert !ShippingMethod.calculators.include?(Calculator::Vat)
+    end
+  end
+
   context "calculate_tax" do
     setup do
       @order = Factory(:order)

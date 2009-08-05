@@ -1,11 +1,8 @@
 class Calculator::Tax < Calculator
+
   def self.description
     "Special calculator for taxes"
-  end
-
-  def self.available?(object)
-    object.is_a?(Order)
-  end
+  end  
 
   # Computes a vat and sales tax for _order_ based on tax rates associated with zones
   def compute(order = nil)

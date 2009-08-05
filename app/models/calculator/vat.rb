@@ -1,4 +1,14 @@
 class Calculator::Vat < Calculator
+
+  def self.description
+    I18n.t("vat")
+  end
+
+  def self.register
+    super
+    TaxRate.register_calculator(self)
+  end
+
   # list the vat rates for the default country
   # TODO: Refactor this method after integrating #54 to use default address
   def self.default_rates

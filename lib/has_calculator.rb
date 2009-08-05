@@ -4,17 +4,27 @@ module HasCalculator
       has_one   :calculator, :as => :calculable, :dependent => :destroy
       accepts_nested_attributes_for :calculator
       validates_presence_of(:calculator) if options[:require]
-
+      
+      class_inheritable_accessor :calculators
+      self.calculators = []
+      # @available_calculators = []
+      def register_calculator(calculator)
+        self.calculators << calculator
+      end
+      # def calculators
+      #   @available_calculators
+      # end
+      
       if options[:default]
         default_calculator_class = options[:default]
-        if default_calculator_class.available?(self.new)
+        #if default_calculator_class.available?(self.new)
           before_create :default_calculator
           define_method(:default_calculator) do
             self.calculator ||= default_calculator_class.new
           end
-        else
-          raise(ArgumentError, "calculator #{default_calculator_class} can't be used with #{self}")
-        end
+        # else
+        #   raise(ArgumentError, "calculator #{default_calculator_class} can't be used with #{self}")
+        # end
       else
         define_method(:default_calculator) do
           nil
