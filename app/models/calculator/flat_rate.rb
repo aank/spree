@@ -2,7 +2,7 @@ class Calculator::FlatRate < Calculator
   preference :amount, :decimal, :default => 0
 
   def self.description
-    "Flat rate per order"
+    I18n.t("flat_rate_per_order")
   end
 
   def self.available?(object)

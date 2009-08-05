@@ -2,7 +2,7 @@ class Calculator::FlatPercent < Calculator
   preference :flat_percent, :decimal, :default => 0
 
   def self.description
-    "Percent of item total"
+    I18n.t("flat_percent")
   end
 
   def self.available?(object)
