@@ -2,7 +2,7 @@ class Shipment < ActiveRecord::Base
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :address
-  has_one    :charge,   :as => :charge_source
+  has_one    :charge,   :as => :adjustment_base
   has_calculator :default => Calculator::Shipping
 
   before_create :generate_shipment_number
@@ -27,10 +27,11 @@ class Shipment < ActiveRecord::Base
 
   def create_shipping_charge
     if shipping_method
-      self.charge ||= ShippingCharge.create({
+      self.charge ||= Charge.create({
           :order => order,
+          :secondary_type => "ShippingCharge",
           :description => "#{I18n.t(:shipping)} (#{shipping_method.name})",
-          :charge_source => self,
+          :adjustment_base => self,
         })
     end
   end

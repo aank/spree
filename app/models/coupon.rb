@@ -1,5 +1,5 @@
 class Coupon < ActiveRecord::Base
-  has_many  :credits,    :as => :charge_source
+  has_many  :credits,    :as => :adjustment_base
   has_calculator
 
   validates_presence_of :code

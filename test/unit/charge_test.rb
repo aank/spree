@@ -22,15 +22,15 @@ class ChargeTest < ActiveSupport::TestCase
       end
 
       should "set order as charge source" do
-        assert_equal(@order, @tax_charge.charge_source)
+        assert_equal(@order, @tax_charge.adjustment_base)
       end
 
       should "not calculate tax_charge" do
-        assert_equal(nil, @tax_charge.calculate_charge)
+        assert_equal(nil, @tax_charge.calculate_adjustment)
       end
 
       should "have correct calculator" do
-        assert_equal("Calculator::Tax", @tax_charge.charge_source.calculator.class.name)
+        assert_equal("Calculator::Tax", @tax_charge.adjustment_base.calculator.class.name)
       end
 
       should "have amount = 0" do
@@ -40,7 +40,7 @@ class ChargeTest < ActiveSupport::TestCase
 
     context "with checkout, shipping method and addresses" do
       setup do
-        stub_zone
+#        stub_zone
         create_shipping_method_for @order
         @ship_charge = @order.shipping_charges.first
         @tax_charge = @order.tax_charges.first
@@ -64,17 +64,17 @@ class ChargeTest < ActiveSupport::TestCase
       end
 
       should "set checkout as charge source of ship_charge" do
-        assert_equal(@checkout, @ship_charge.charge_source)
+        assert_equal(@checkout, @ship_charge.adjustment_base)
       end
 
       should "calculate value of ship_charge" do
-        assert_equal("10.0", @ship_charge.calculate_charge.to_s)
+        assert_equal("10.0", @ship_charge.calculate_adjustment.to_s)
       end
 
       should "recalculate tax_chare, to be 0.05 of item total" do
-        assert_not_equal(nil, @tax_charge.calculate_charge)
+        assert_not_equal(nil, @tax_charge.calculate_adjustment)
         tax = @order.line_items.total * 0.05
-        assert_equal(tax.to_s, @tax_charge.calculate_charge.to_s)
+        assert_equal(tax.to_s, @tax_charge.calculate_adjustment.to_s)
       end
     end
   end

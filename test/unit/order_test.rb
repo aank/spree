@@ -29,7 +29,7 @@ class OrderTest < ActiveSupport::TestCase
 
     should "update totals" do
       @order.item_total = nil
-      @order.charge_total = nil
+      @order.adjustment_total = nil
       @order.total = nil
       @order.update_totals
       assert_not_nil(@order.item_total)
@@ -55,7 +55,7 @@ class OrderTest < ActiveSupport::TestCase
 
       should "destroy charge from checkout" do
         assert_nil(@order.checkout.charge)
-        assert_nil(@order.charges.select{|c| c.charge_source == @order.checkout}.first, "Order still have charge from checkout")
+        assert_nil(@order.charges.select{|c| c.adjustment_base == @order.checkout}.first, "Order still have charge from checkout")
       end
     end
   end

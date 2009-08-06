@@ -1,4 +1,4 @@
-class Credit < Charge
+class Credit < Adjustment
    before_save :inverse_amount
 
   def inverse_amount
@@ -6,11 +6,11 @@ class Credit < Charge
     self.amount = self.amount * x
   end
 
-  def calculate_charge
-    charge = super
-    charge && (
-      x = charge > 0 ? -1 : 1
-      charge * x
+  def calculate_adjustment
+    adjustment = super
+    adjustment && (
+      x = adjustment > 0 ? -1 : 1
+      adjustment * x
     )
   end
 end

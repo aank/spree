@@ -31,10 +31,6 @@ class TestCouponCalc
   end
 end
 
-def stub_zone
-  Zone.any_instance.stubs(:include?).returns(true)
-end
-
 def create_order_with_items
   @order = Factory(:order)
   3.times do

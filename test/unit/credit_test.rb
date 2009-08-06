@@ -11,12 +11,16 @@ class CreditTest < ActiveSupport::TestCase
       @order.save
     end
 
-    should "set positive credit_toal" do
+    should "set positive credit_total" do
       assert_equal("2.0", @order.credit_total.to_s)
     end
 
-    should "Set negative charge_total" do
-      assert_equal("-2.0", @order.charge_total.to_s)
+    should "not set negative charge_total" do
+      assert_equal("0.0", @order.charge_total.to_s)
+    end
+
+    should "set negative adjustment_total" do
+      assert_equal("-2.0", @order.adjustment_total.to_s)
     end
 
     should "decrase total" do

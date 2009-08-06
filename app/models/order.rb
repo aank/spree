@@ -24,9 +24,12 @@ class Order < ActiveRecord::Base
   has_one :shipping_method, :through => :checkout
   has_many :shipments, :dependent => :destroy
 
+  has_many :adjustments,      :extend => Totaling, :order => :position
   has_many :charges,          :extend => Totaling, :order => :position
-  has_many :shipping_charges, :extend => Totaling
-  has_many :tax_charges,      :extend => Totaling
+  has_many :shipping_charges, :extend => Totaling, :order => :position,
+    :class_name => "Charge", :conditions => {:secondary_type => "ShippingCharge"}
+  has_many :tax_charges,      :extend => Totaling, :order => :position,
+    :class_name => "Charge", :conditions => {:secondary_type => "TaxCharge"}
   has_many :credits,          :extend => Totaling, :order => :position
 
   has_calculator :default => Calculator::Tax
@@ -188,12 +191,16 @@ class Order < ActiveRecord::Base
     credits.reload.total.abs
   end
 
+  def charge_total
+    charges.reload.total
+  end
+
   def create_tax_charge
     if tax_charges.empty?
       tax_charges.create({
           :order => self,
           :description => I18n.t(:tax),
-          :charge_source => self,
+          :adjustment_base => self,
         })
     end
   end
@@ -201,9 +208,9 @@ class Order < ActiveRecord::Base
   def update_totals
     charges.reload.each(&:update_amount)
 
-    self.item_total   = self.line_items.reload.total
-    self.charge_total = self.ship_total + self.tax_total - self.credit_total
-    self.total        = self.item_total + self.charge_total
+    self.item_total       = self.line_items.reload.total
+    self.adjustment_total = self.charge_total - self.credit_total
+    self.total            = self.item_total   + self.adjustment_total
   end
 
   def update_totals!

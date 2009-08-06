@@ -4,7 +4,7 @@ class Checkout < ActiveRecord::Base
   after_save :process_coupon_code
   after_save :create_temporary_shipping_charge
   
-  has_one    :charge,   :as => :charge_source
+  has_one    :charge,   :as => :adjustment_base
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
@@ -44,10 +44,11 @@ class Checkout < ActiveRecord::Base
 
   def create_temporary_shipping_charge
     if shipping_method
-      self.charge ||= ShippingCharge.create({
+      self.charge ||= Charge.create({
           :order => order,
+          :secondary_type => "ShippingCharge",
           :description => "#{I18n.t(:shipping)} (#{shipping_method.name})",
-          :charge_source => self,
+          :adjustment_base => self,
         })
       order.update_totals
     end

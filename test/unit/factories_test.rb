@@ -13,7 +13,7 @@ class FactoriesTest < ActiveSupport::TestCase
     end
   end
 
-  [:charge, :tax_charge, :shipping_charge, :credit].each do |charge_type|
+  [:adjustment, :charge, :credit].each do |charge_type|
     context "#{charge_type} factory" do
       should "return correct classes" do
         assert_equal(charge_type.to_s.camelize, Factory.build(charge_type).class.name)
