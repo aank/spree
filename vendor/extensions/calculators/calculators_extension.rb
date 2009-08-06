@@ -18,7 +18,6 @@ class CalculatorsExtension < Spree::Extension
       Calculator::FlatRate,
       Calculator::FlexiRate,
       Calculator::PerItem,
-      Calculator::Shipping,
       Calculator::SalesTax,
       Calculator::Vat,
     ].each(&:register)

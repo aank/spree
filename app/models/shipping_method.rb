@@ -10,6 +10,6 @@ class ShippingMethod < ActiveRecord::Base
   
   def available?(order)
     zone.include?(order.ship_address) &&
-      calculator && calculator.available?(order)
+      calculator
   end
 end

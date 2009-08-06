@@ -2,7 +2,7 @@ class Adjustment < ActiveRecord::Base
   acts_as_list :scope => :order
   
   belongs_to :order
-  belongs_to :adjustment_base, :polymorphic => true
+  belongs_to :adjustment_source, :polymorphic => true
 
   validates_presence_of :amount
   validates_presence_of :description
@@ -15,10 +15,10 @@ class Adjustment < ActiveRecord::Base
   end
 
   def calculate_adjustment
-    if adjustment_base
-      calc = adjustment_base.calculator || adjustment_base.default_calculator
+    if adjustment_source
+      calc = adjustment_source.calculator || adjustment_source.default_calculator
       raise(RuntimeError, "#{self.class.name}##{id} doesn't have a calculator") unless calc
-      calc.compute(adjustment_base)
+      calc.compute(adjustment_source)
     elsif read_attribute(:amount)
       read_attribute(:amount)
     else

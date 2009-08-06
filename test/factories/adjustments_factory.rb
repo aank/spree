@@ -9,6 +9,7 @@ end
 Factory.define(:charge, :class => Charge) do |record|
   record.amount { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
   record.description { Faker::Lorem.sentence }
+  record.secondary_type "Charge"
 
   # associations:
   #record.association(:order, :factory => :order)

@@ -2,8 +2,7 @@ class Shipment < ActiveRecord::Base
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :address
-  has_one    :charge,   :as => :adjustment_base
-  has_calculator :default => Calculator::Shipping
+  has_one    :charge,   :as => :adjustment_source
 
   before_create :generate_shipment_number
   after_save :transition_order
@@ -13,7 +12,7 @@ class Shipment < ActiveRecord::Base
   accepts_nested_attributes_for :address
 
   def calculate_shipping
-    calculator.compute(self)
+    charge.calculate_shipping_charge
   end
      
   def shipped?
@@ -31,7 +30,7 @@ class Shipment < ActiveRecord::Base
           :order => order,
           :secondary_type => "ShippingCharge",
           :description => "#{I18n.t(:shipping)} (#{shipping_method.name})",
-          :adjustment_base => self,
+          :adjustment_source => self,
         })
     end
   end

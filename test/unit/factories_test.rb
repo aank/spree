@@ -3,7 +3,7 @@ require 'test_helper'
 class FactoriesTest < ActiveSupport::TestCase
   fixtures :countries
 
-  Factory.factories.keys.each do |factory|
+  (Factory.factories.keys - [:global_zone]).each do |factory|
     context factory.to_s do
       should "generate valid record" do
         Timeout.timeout(2) do

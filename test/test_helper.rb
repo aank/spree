@@ -31,7 +31,15 @@ class TestCouponCalc
   end
 end
 
+class Zone
+  def self.global
+    find_by_name("GlobalZone") || Factory(:global_zone)
+  end
+end
+
+
 def create_order_with_items
+  @zone = Zone.global
   @order = Factory(:order)
   3.times do
     variant = Factory(:product).variants.first

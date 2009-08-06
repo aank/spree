@@ -5,7 +5,7 @@ Factory.define(:shipping_method) do |record|
   record.name { Factory.next(:shipping_method_sequence) } 
 
   # associations: 
-  record.zone {|proxy| Zone.find(:first) || Factory(:zone)}
+  record.zone {Zone.global}
 end
 
 Factory.define :calculator, :class => Calculator::FlatRate do |f|

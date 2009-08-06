@@ -58,6 +58,7 @@ class CheckoutTest < ActiveSupport::TestCase
           setup do
             @shipping_method.calculator.update_attribute(:preferred_amount, 20)
             @checkout.save
+            @order.update_totals!
           end
           should_not_change "@checkout.order.shipping_charges.count"
           should_change "@checkout.order.shipping_charges.first.amount", :from => 10, :to => 20

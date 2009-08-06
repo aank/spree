@@ -22,15 +22,11 @@ class ChargeTest < ActiveSupport::TestCase
       end
 
       should "set order as charge source" do
-        assert_equal(@order, @tax_charge.adjustment_base)
+        assert_equal(@order, @tax_charge.adjustment_source)
       end
 
       should "not calculate tax_charge" do
         assert_equal(nil, @tax_charge.calculate_adjustment)
-      end
-
-      should "have correct calculator" do
-        assert_equal("Calculator::Tax", @tax_charge.adjustment_base.calculator.class.name)
       end
 
       should "have amount = 0" do
@@ -49,7 +45,7 @@ class ChargeTest < ActiveSupport::TestCase
 
       should "have ship_address and at least one zone address belongs to" do
         assert(@order.ship_address, "Ship_address is empty")
-        zones = Zone.match(@order.ship_address.zone)
+        zones = Zone.match(@order.ship_address)
         assert(!zones.empty?, "Zones are empty")
       end
 
@@ -63,8 +59,8 @@ class ChargeTest < ActiveSupport::TestCase
         assert_equal("10.0", @ship_charge.amount.to_s)
       end
 
-      should "set checkout as charge source of ship_charge" do
-        assert_equal(@checkout, @ship_charge.adjustment_base)
+      should "set first shipment as charge source of ship_charge" do
+        assert_equal(@order.shipment, @ship_charge.adjustment_source)
       end
 
       should "calculate value of ship_charge" do
@@ -73,6 +69,9 @@ class ChargeTest < ActiveSupport::TestCase
 
       should "recalculate tax_chare, to be 0.05 of item total" do
         assert_not_equal(nil, @tax_charge.calculate_adjustment)
+        assert(Zone.global.include?(@order.ship_address))
+        assert_equal Zone.global, TaxRate.find(:first).zone
+        assert(!Zone.global.tax_rates.empty?)
         tax = @order.line_items.total * 0.05
         assert_equal(tax.to_s, @tax_charge.calculate_adjustment.to_s)
       end

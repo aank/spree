@@ -2,14 +2,12 @@ class Checkout < ActiveRecord::Base
   before_save :authorize_creditcard, :unless => "Spree::Config[:auto_capture]"
   before_save :capture_creditcard, :if => "Spree::Config[:auto_capture]"
   after_save :process_coupon_code
-  after_save :create_temporary_shipping_charge
+  after_save :update_default_shipping
   
-  has_one    :charge,   :as => :adjustment_base
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
-  has_calculator :default => Calculator::Shipping
 
   accepts_nested_attributes_for :ship_address, :bill_address
 
@@ -42,15 +40,10 @@ class Checkout < ActiveRecord::Base
     coupon.create_discount(order)
   end
 
-  def create_temporary_shipping_charge
-    if shipping_method
-      self.charge ||= Charge.create({
-          :order => order,
-          :secondary_type => "ShippingCharge",
-          :description => "#{I18n.t(:shipping)} (#{shipping_method.name})",
-          :adjustment_base => self,
-        })
-      order.update_totals
-    end
+  def update_default_shipping
+    order.shipment.update_attributes({
+        :shipping_method => shipping_method,
+        :address => ship_address
+      })
   end
 end

@@ -52,11 +52,6 @@ class OrderTest < ActiveSupport::TestCase
       should "update checkout completed_at" do
         assert(@order.checkout.completed_at, "Checkout#completed_at was not updated")
       end
-
-      should "destroy charge from checkout" do
-        assert_nil(@order.checkout.charge)
-        assert_nil(@order.charges.select{|c| c.adjustment_base == @order.checkout}.first, "Order still have charge from checkout")
-      end
     end
   end
 

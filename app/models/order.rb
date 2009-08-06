@@ -7,7 +7,7 @@ class Order < ActiveRecord::Base
 
   before_create :generate_token
   before_save :update_line_items, :update_totals
-  after_create :create_checkout, :create_tax_charge
+  after_create :create_checkout_and_shippment, :create_tax_charge
 
   belongs_to :user
   has_many :state_events
@@ -31,8 +31,6 @@ class Order < ActiveRecord::Base
   has_many :tax_charges,      :extend => Totaling, :order => :position,
     :class_name => "Charge", :conditions => {:secondary_type => "TaxCharge"}
   has_many :credits,          :extend => Totaling, :order => :position
-
-  has_calculator :default => Calculator::Tax
 
   accepts_nested_attributes_for :checkout
   
@@ -200,7 +198,7 @@ class Order < ActiveRecord::Base
       tax_charges.create({
           :order => self,
           :description => I18n.t(:tax),
-          :adjustment_base => self,
+          :adjustment_source => self,
         })
     end
   end
@@ -222,8 +220,7 @@ class Order < ActiveRecord::Base
   
   def complete_order
     # destroy temporary checkout charge, since we're creating shipment, which will recreate it
-    checkout.charge && checkout.charge.destroy
-    shipments.build(:address => ship_address, :shipping_method => checkout.shipping_method)
+    shipment.update_attributes(:address => ship_address, :shipping_method => checkout.shipping_method)
     checkout.update_attribute(:completed_at, Time.now)
     InventoryUnit.sell_units(self)
     save_result = save!
@@ -254,7 +251,8 @@ class Order < ActiveRecord::Base
     self.token = Authlogic::Random.friendly_token
   end
   
-  def create_checkout
+  def create_checkout_and_shippment
+    self.shipments << Shipment.create(:order => self)
     self.checkout ||= Checkout.create(:order => self)
   end
 end
