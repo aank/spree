@@ -45,8 +45,8 @@ jQuery.fn.sameAddress = function() {
       return;
     }
     $('input#hidden_sstate').val($('input#hidden_bstate').val());
-    $("#billing input, #billing select").each(function() {
-      $("#shipping #"+ $(this).attr('id').replace('bill', 'ship')).val($(this).val());
+    $("#billing input, #billing select").each(function() {   
+      $("#shipping #"+ $(this).attr('id').replace('bill', 'shipment_attributes')).val($(this).val());
     })
     update_state('s');
   })
