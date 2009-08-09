@@ -30,23 +30,8 @@ class Charge < Adjustment
   # from 3 shipping categories, shipping cost will triple.
   # You can alter this behaviour by overwriting this method in your site extension
   def calculate_shipping_charge
-    return unless adjustment_source.shipping_method
-    sm = adjustment_source.shipping_method
-
-    rate_calculators = {}
-    sm.shipping_rates.each do |sr|
-      rate_calculators[sr.shipping_category_id] = sr.caclualtor
-    end
-    default_calculator = sm.calculator
-
-    calculated_costs = adjustment_source.order.line_items.group_by{|li|
-      li.product.shipping_category_id
-    }.map{ |shipping_category_id, line_items|
-      calc = rate_calculators[shipping_category_id] || default_calculator
-      calc.compute(line_items)
-    }.sum
-
-    return(calculated_costs)
+    return unless shipping_method = adjustment_source.shipping_method
+    shipping_method.calculate_cost(adjustment_source)
   end
 
 end

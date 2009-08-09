@@ -286,7 +286,7 @@ var update_shipping_methods = function(methods) {
     var i = $(document.createElement('input'))
                 .attr('id', this.id)
                 .attr('type', 'radio')
-                .attr('name', 'checkout[shipping_method_id]')
+                .attr('name', 'checkout[shipment_attributes][shipping_method_id]')
                 .val(this.id)
                 .click(function() { $('div#methods input').attr('checked', ''); $(this).attr('checked', 'checked'); });
     if($(methods).length == 1) {
