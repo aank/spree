@@ -37,7 +37,7 @@ class ChargeTest < ActiveSupport::TestCase
     context "with checkout, shipping method and addresses" do
       setup do
 #        stub_zone
-        create_shipping_method_for @order
+#        create_shipping_method_for @order
         @ship_charge = @order.shipping_charges.first
         @tax_charge = @order.tax_charges.first
         assert(@ship_charge, "Shipping charge was not created")
