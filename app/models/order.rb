@@ -20,8 +20,8 @@ class Order < ActiveRecord::Base
 
   has_one :checkout
   has_one :bill_address, :through => :checkout
-  has_one :ship_address, :through => :shipments, :source => :address, :order => "created_at ASC"
-  has_one :shipping_method, :through => :checkout
+  has_one :ship_address, :through => :shipments, :source => :address, :order => "shipments.created_at ASC"
+  has_one :shipping_method, :through => :shipments, :source => :address, :order => "shipments.created_at ASC"
   has_many :shipments, :dependent => :destroy
 
   has_many :adjustments,      :extend => Totaling, :order => :position

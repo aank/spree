@@ -5,7 +5,7 @@ class Checkout < ActiveRecord::Base
   
   belongs_to :order
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
-  has_one :shipment, :through => :order, :source => :shipments, :order => "created_at ASC"                       
+  has_one :shipment, :through => :order, :source => :shipments, :order => "shipments.created_at ASC"                       
   
   accepts_nested_attributes_for :bill_address
   accepts_nested_attributes_for :shipment
