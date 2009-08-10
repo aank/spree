@@ -13,7 +13,7 @@ class ShippingMethodTest < ActiveSupport::TestCase
     end
     context "when calculator indicates method is supported" do
       should "be available" do
-        assert(@zone.include?(@shipment.address), "Zone doesn't include address")
+        assert(@zone.include?(@order.ship_address), "Zone doesn't include address")
         assert(@shipping_method.calculator)
 
         assert @shipping_method.available?(@order)
