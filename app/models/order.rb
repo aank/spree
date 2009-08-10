@@ -20,8 +20,8 @@ class Order < ActiveRecord::Base
 
   has_one :checkout
   has_one :bill_address, :through => :checkout
-  has_one :ship_address, :through => :checkout
-  has_one :shipping_method, :through => :checkout
+  has_one :ship_address, :through => :shipments, :source => :address, :order => "shipments.created_at ASC"
+  has_one :shipping_method, :through => :shipments, :source => :address, :order => "shipments.created_at ASC"
   has_many :shipments, :dependent => :destroy
 
   has_many :adjustments,      :extend => Totaling, :order => :position
@@ -219,8 +219,6 @@ class Order < ActiveRecord::Base
   private
   
   def complete_order
-    # destroy temporary checkout charge, since we're creating shipment, which will recreate it
-    shipment.update_attributes(:address => ship_address, :shipping_method => checkout.shipping_method)
     checkout.update_attribute(:completed_at, Time.now)
     InventoryUnit.sell_units(self)
     save_result = save!

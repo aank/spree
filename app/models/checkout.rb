@@ -2,14 +2,13 @@ class Checkout < ActiveRecord::Base
   before_save :authorize_creditcard, :unless => "Spree::Config[:auto_capture]"
   before_save :capture_creditcard, :if => "Spree::Config[:auto_capture]"
   after_save :process_coupon_code
-  after_save :update_default_shipping
   
   belongs_to :order
-  belongs_to :shipping_method
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
-  belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
-
-  accepts_nested_attributes_for :ship_address, :bill_address
+  has_one :shipment, :through => :order, :source => :shipments, :order => "shipments.created_at ASC"                       
+  
+  accepts_nested_attributes_for :bill_address
+  accepts_nested_attributes_for :shipment
 
   # for memory-only storage of creditcard details
   attr_accessor :creditcard    
@@ -18,7 +17,7 @@ class Checkout < ActiveRecord::Base
   private
   def authorize_creditcard
     return unless process_creditcard? 
-    cc = Creditcard.new(creditcard.merge(:address => self.bill_address, :checkout => self))
+    cc = Creditcard.new(creditcard.merge(:address => shipment.address, :checkout => self))
     return unless cc.valid? and cc.authorize(order.total)
     order.complete
   end
@@ -40,10 +39,4 @@ class Checkout < ActiveRecord::Base
     coupon.create_discount(order)
   end
 
-  def update_default_shipping
-    order.shipment.update_attributes({
-        :shipping_method => shipping_method,
-        :address => ship_address
-      })
-  end
 end
