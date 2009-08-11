@@ -11,13 +11,28 @@ class IncompleteCheckoutTest < ActiveSupport::TestCase
         setup do
           Spree::Config.set(:auto_capture => false)
           @checkout.save
+          @checkout.shipment.update_attributes(:address_attributes => Factory.attributes_for(:address))
         end
         should_change "Creditcard.count", :by => 1
         should_change "CreditcardPayment.count", :by => 1
         should_change "CreditcardTxn.count", :by => 1
         should_change "@checkout.order.state", :from => 'in_progress', :to => 'new'
+        should 'require processing' do
+          assert @checkout.send(:process_creditcard?)
+        end
+        should 'have valid credit card' do
+          cc = Creditcard.new(@checkout.creditcard.merge(:address => @checkout.shipment.address, :checkout => @checkout))
+          assert cc.valid?, "Credit card is not valid, errors: #{cc.errors.inspect}"
+        end
+        should 'authorize total' do
+          cc = Creditcard.new(@checkout.creditcard.merge(:address => @checkout.shipment.address, :checkout => @checkout))
+          assert cc.authorize(@checkout.order.total)
+        end
         should 'not have errors' do
           assert(@checkout.errors.empty?, "checkout had folowing errors: #{@checkout.errors.inspect}")
+        end
+        should 'authorize credit card' do
+          assert @checkout.send(:authorize_creditcard)
         end
       end
       context "save with :auto_capture => true" do
