@@ -4,7 +4,7 @@ class RenameChargesToAdjustments < ActiveRecord::Migration
     add_column   :adjustments, :secondary_type, :string
 
     execute 'UPDATE adjustments SET secondary_type = type;'
-    execute 'UPDATE adjustments SET type = "Charge" WHERE type LIKE "%Charge";'
+    execute "UPDATE adjustments SET type='Charge' WHERE type LIKE '%Charge';"
 
     rename_column :orders, :charge_total, :adjustment_total
     rename_column :adjustments, :charge_source_id, :adjustment_base_id
