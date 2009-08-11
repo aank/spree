@@ -10,8 +10,8 @@ class IncompleteCheckoutTest < ActiveSupport::TestCase
       context "save with :auto_capture => false" do
         setup do
           Spree::Config.set(:auto_capture => false)
+          @checkout.shipment.address = Factory(:address)
           @checkout.save
-          @checkout.shipment.update_attributes(:address_attributes => Factory.attributes_for(:address))
         end
         should_change "Creditcard.count", :by => 1
         should_change "CreditcardPayment.count", :by => 1
@@ -31,13 +31,10 @@ class IncompleteCheckoutTest < ActiveSupport::TestCase
         should 'not have errors' do
           assert(@checkout.errors.empty?, "checkout had folowing errors: #{@checkout.errors.inspect}")
         end
-        should 'authorize credit card' do
-          assert @checkout.send(:authorize_creditcard)
-        end
       end
       context "save with :auto_capture => true" do
         setup do
-          Spree::Config.set(:auto_capture => true)
+          Spree::Config.set(:auto_capture => true)       
           @checkout.save
         end
         teardown { Spree::Config.set(:auto_capture => false) }
