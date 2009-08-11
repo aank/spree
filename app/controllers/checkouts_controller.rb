@@ -48,7 +48,11 @@ class CheckoutsController < Spree::BaseController
     @checkout.ip_address ||= request.env['REMOTE_ADDR']
     @checkout.email = current_user.email if current_user && @checkout.email.blank?
     @order.update_attribute(:user, current_user) if current_user and @order.user.blank?
-  end    
+  end 
+  
+  update.after do
+    @order.save
+  end   
     
   private
   def object
