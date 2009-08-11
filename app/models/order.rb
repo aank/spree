@@ -20,8 +20,6 @@ class Order < ActiveRecord::Base
 
   has_one :checkout
   has_one :bill_address, :through => :checkout
-  has_one :ship_address, :through => :shipments, :source => :address, :order => "shipments.created_at ASC"
-  has_one :shipping_method, :through => :shipments, :source => :address, :order => "shipments.created_at ASC"
   has_many :shipments, :dependent => :destroy
 
   has_many :adjustments,      :extend => Totaling, :order => :position
@@ -34,6 +32,8 @@ class Order < ActiveRecord::Base
 
   accepts_nested_attributes_for :checkout
   
+  def ship_address; shipment.address; end
+  delegate :shipping_method, :to =>:shipment
   delegate :email, :to => :checkout
   delegate :ip_address, :to => :checkout
   delegate :special_instructions, :to => :checkout 

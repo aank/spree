@@ -6,12 +6,12 @@ class ChargeTest < ActiveSupport::TestCase
 
   context "Order" do
     setup do
-      create_order_with_items
+      @order = Factory(:order)
     end
 
     should "create default tax charge" do
       assert_equal(1, @order.tax_charges.length)
-      assert_equal(1, @order.charges.length)
+      assert_equal(1, @order.charges.reload.length)
       assert_equal(0, @order.shipping_charges.length)
     end
 
@@ -36,16 +36,16 @@ class ChargeTest < ActiveSupport::TestCase
 
     context "with checkout, shipping method and addresses" do
       setup do
-#        stub_zone
-#        create_shipping_method_for @order
+        create_compleate_order
         @ship_charge = @order.shipping_charges.first
         @tax_charge = @order.tax_charges.first
         assert(@ship_charge, "Shipping charge was not created")
       end
 
       should "have ship_address and at least one zone address belongs to" do
-        assert(@order.ship_address, "Ship_address is empty")
-        zones = Zone.match(@order.ship_address)
+        assert(@order.shipment.address, "Ship_address is empty")
+        assert_not_nil(Zone.global.include?(@order.shipment.address), "Default zone doesn't include address. wierd")
+        zones = Zone.match(@order.shipment.address)
         assert(!zones.empty?, "Zones are empty")
       end
 
@@ -68,11 +68,10 @@ class ChargeTest < ActiveSupport::TestCase
       end
 
       should "recalculate tax_chare, to be 0.05 of item total" do
-        assert_not_equal(nil, @tax_charge.calculate_adjustment)
-        assert(Zone.global.include?(@order.ship_address))
+        assert_not_nil(Zone.global.include?(@order.shipment.address), "Default zone doesn't include address. wierd")
         assert_equal Zone.global, TaxRate.find(:first).zone
         assert(!Zone.global.tax_rates.empty?)
-        tax = @order.line_items.total * 0.05
+        tax = @order.line_items.reload.total * 0.05
         assert_equal(tax.to_s, @tax_charge.calculate_adjustment.to_s)
       end
     end

@@ -36,26 +36,27 @@ class Zone
     find_by_name("GlobalZone") || Factory(:global_zone)
   end
 end
-
-
-def create_order_with_items
+def create_compleate_order
   @zone = Zone.global
   @order = Factory(:order)
   3.times do
     variant = Factory(:product).variants.first
     Factory(:line_item, :variant => variant, :order => @order)
   end
-  
-  @order.line_items.reload
-  @order.update_totals
-end
 
-def create_shipping_method_for(order)
-  @checkout = order.checkout
   @shipping_method = Factory(:shipping_method)
-  @checkout.shipping_method = @shipping_method
-  @checkout.ship_address = Factory(:address)
+  @checkout = @order.checkout
+  @shipment = @order.shipment
+  @order.shipment.shipping_method = @shipping_method
+  @order.shipment.address = Factory(:address)
   @checkout.bill_address = Factory(:address)
+  unless @zone.include?(@order.shipment.address)
+    ZoneMember.create(:zone => Zone.global, :zoneable => @order.shipment.address.country)
+    @zone.reload
+  end
+
   @checkout.save
+  @shipment.save
+  @order.save
   @order.reload
 end

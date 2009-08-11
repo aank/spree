@@ -15,9 +15,9 @@ class Charge < Adjustment
   end
 
   def calculate_tax_charge
-    return unless order.ship_address
+    return unless order.shipment.address
     
-    zones = Zone.match(order.ship_address)
+    zones = Zone.match(order.shipment.address)
     tax_rates = zones.map{|zone| zone.tax_rates}.flatten.uniq
     calculated_taxes = tax_rates.map{|tax_rate| tax_rate.calculate_tax(order)}
     return(calculated_taxes.sum)

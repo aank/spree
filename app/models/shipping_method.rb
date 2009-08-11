@@ -5,23 +5,11 @@ class ShippingMethod < ActiveRecord::Base
   has_calculator
    
   def calculate_cost(shipment)
-    rate_calculators = {}
-    shipping_rates.each do |sr|
-      rate_calculators[sr.shipping_category_id] = sr.caclualtor
-    end
-
-    calculated_costs = shipment.order.line_items.group_by{|li|
-      li.product.shipping_category_id
-    }.map{ |shipping_category_id, line_items|
-      calc = rate_calculators[shipping_category_id] || self.calculator
-      calc.compute(line_items)
-    }.sum
-
-    return(calculated_costs)
+    shipment.calculate_shipping
   end   
   
   def available?(order)
-    zone.include?(order.ship_address) &&
+    zone.include?(order.shipment.address) &&
       calculator
   end
 end

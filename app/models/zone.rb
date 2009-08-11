@@ -33,7 +33,7 @@ class Zone < ActiveRecord::Base
   end
       
   def include?(address)
-    return(false) unless address
+    return unless address
     
     # NOTE: This is complicated by the fact that include? for HMP is broken in Rails 2.1 (so we use awkward index method)
     members.any? do |zone_member|

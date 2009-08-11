@@ -10,7 +10,7 @@ class OrderTest < ActiveSupport::TestCase
   end   
   
   context "Order" do
-    setup { create_order_with_items }
+    setup { create_compleate_order }
 
     should "have line_items" do
       assert @order.line_items.length > 0
