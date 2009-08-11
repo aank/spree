@@ -40,6 +40,8 @@ class OrderTest < ActiveSupport::TestCase
     should "create default tax charge" do
       assert(@order.tax_charges.first, "Tax charge was not created")
     end
+    
+    should "eventually create default shipping charge"
 
     context "complete" do
       setup { @order.complete }
