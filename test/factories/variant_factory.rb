@@ -7,7 +7,7 @@ Factory.define(:variant) do |f|
   f.depth  { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
 
   # associations: 
-  #f.association(:product, :factory => :product)
+  f.association(:product, :factory => :product)
   f.option_values { [Factory(:option_value)] }
 end                                                       
 

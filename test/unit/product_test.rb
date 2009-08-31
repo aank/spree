@@ -72,7 +72,7 @@ class ProductTest < Test::Unit::TestCase
   def self.context_created_product(&block) 
     context "Created Product" do 
       setup do 
-        @product = Factory(:product)
+        @product = Factory(:product, :name => "Foo Bar")
         @master_variant = Variant.find_by_product_id(@product.id, :conditions => ["is_master = ?", true])
       end
       teardown do
