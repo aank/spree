@@ -1,0 +1,12 @@
+<%= stylesheet_link_tag "open_id.css" %>
+<% unless @user.new_record? %>
+  <p><%= image_tag "openid-inputicon.gif" %>
+     OpenID - Please login as an existing customer
+  </p>
+<% else %>
+<p>
+  <%= f.label :openid_identifier, t('OpenID', :default => 'OpenID') %><br />
+  <%= f.text_field :openid_identifier, :class => 'title openid_url' %>
+</p>
+<% end %>
+

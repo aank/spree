@@ -1,15 +1,15 @@
 <p>
-  <label for="<%= t("email") %>"><%= t("email") %></label><br />
+  <%= f.label :email, t("email") %><br />
   <%= f.text_field :email, :class => 'title'  %>
 </p>
 
 <p>
-  <label for="<%= t("password") %>"><%= t("password") %></label><br />
+  <%= f.label :password, t("password") %><br />
   <%= f.password_field :password, :class => 'title'  %>
 </p>
 
 <p>
-  <label for="<%= t("password") %>"><%= t("confirm") %></label><br />
+  <%= f.label :password_confirmation, t("password_confirmation", :default => t(:confirm)) %><br />
   <%= f.password_field :password_confirmation, :class => 'title' %>
 </p>
 

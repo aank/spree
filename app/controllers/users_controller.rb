@@ -4,21 +4,22 @@ class UsersController < Spree::BaseController
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :initialize_extension_partials
+  before_filter :add_openid_fields
   ssl_required :new, :create, :edit, :update, :show
   
   actions :all, :except => [:index, :destroy]
 
-  create do   
-    flash nil
-    wants.html { redirect_back_or_default products_path }
-    wants.js { render :js => true.to_json }
-    failure.wants.html { render :new }
-    failure.wants.js { render :js => @user.errors.to_json }    
-  end 
-  
-  create.after do
-    next if admin_created?
-    @user.roles << Role.find_by_name("admin")
+  def create 
+    @user = User.new(params[:user])
+    @user.save do |result|
+      if result
+        flash[:notice] = t(:user_created_successfully)
+        @user.roles << Role.find_by_name("admin") unless admin_created?
+        redirect_back_or_default account_url
+      else
+        render :action => :new
+      end
+    end
   end
 
   show.before do
@@ -35,6 +36,10 @@ class UsersController < Spree::BaseController
     else
       render :action => :edit
     end
+  end
+  
+  def add_openid_fields
+    @extension_partials << 'openid_identifier'
   end
 
 end
