@@ -284,6 +284,7 @@ ru-RU:
   extension: "Расширение"
   extensions: "Расширения"
   filename: "Имя файла"
+  fill_email: "Укажите email"
   final_confirmation: "Окончательное подтверждение"
   first_item: First Item Cost
   first_name: "Имя"
@@ -593,6 +594,7 @@ ru-RU:
   use_different_shipping_address: "использовать другой адрес доставки"
   user: "Пользователь"
   user_account: "Учетная запись пользователя"
+  user_created_successfully: "Учётная запись успешно создана"
   user_details: "Дополнительно"
   users: "Пользователи"
   value: "Значение"

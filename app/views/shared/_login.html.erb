@@ -8,11 +8,13 @@
     <%= label :user_session, :password, t("password") %><br />
     <%= password_field :user_session, 'password', :class => 'title' %>
   </p>
-  <p><%= t :or %></p>
-  <p>
-      <%= label :user_session, :openid_identifier, t('OpenID', :default => 'OpenID') %><br /> 	
-      <%= text_field :user_session, :openid_identifier, :class => "title openid_url", :size => 28 %>
-	</p>
+  <% if Spree::Config[:allow_openid] %>  
+    <p><%= t :or %></p>
+    <p>
+        <%= label :user_session, :openid_identifier, t('OpenID', :default => 'OpenID') %><br /> 	
+        <%= text_field :user_session, :openid_identifier, :class => "title openid_url", :size => 28 %>
+    </p>
+  <% end %>
   <p>
   	<label>
       <%= check_box :user_session, :remember_me %>

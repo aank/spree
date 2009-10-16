@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
     #for more defaults check the AuthLogic documentation
   end
   
-  openid_required_fields [:email, :nickname]
+  openid_required_fields [:email]
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
@@ -44,7 +44,13 @@ class User < ActiveRecord::Base
     return false if openid_identifier
     crypted_password.blank? || !password.blank?
   end
-  
+
+  def object
+    @user = @current_user
+    @user ||= User.new(params[:user]) if params[:user]
+    @user ||= User.new
+    @user
+  end  
    
   # fetch persona from openid.sreg parameters returned by openid server if supported
   # http://openid.net/specs/openid-simple-registration-extension-1_0.html
@@ -63,11 +69,11 @@ class User < ActiveRecord::Base
    
   def set_login
     # for now force login to be same as email, eventually we will make this configurable, etc.
-    self.login = self.email if self.email && !self.login
+    self.login ||= self.email if self.email
   end 
   
   def add_user_role
     user_role = Role.find_by_name("user")
     self.roles << user_role if user_role and self.roles.empty?
-  end     
+  end
 end

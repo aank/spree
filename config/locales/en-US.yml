@@ -284,6 +284,7 @@ en-US:
   extension: Extension
   extensions: Extensions
   filename: Filename
+  fill_email: "Fill email"
   final_confirmation: "Final Confirmation"
   first_item: First Item Cost
   first_name: "First Name"
@@ -593,6 +594,7 @@ en-US:
   use_different_shipping_address: "Use Different Shipping Address"
   user: User
   user_account: User Account
+  user_created_successfully: "User created successfully"
   user_details: "User Details"
   users: Users
   value: Value
