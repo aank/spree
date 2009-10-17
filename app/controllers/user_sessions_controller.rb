@@ -9,9 +9,12 @@ class UserSessionsController < Spree::BaseController
   end
 
   def create
-    if !params['openid.sreg.email'] && 
-        (user_with_openid_exists?(params[:user_session]) || 
-          user_without_openid(params[:user_session]))
+    not_need_user_auto_creation = 
+        user_without_openid(params[:user_session]) ||
+        user_with_openid_exists?(:openid_identifier => params['openid.identity']) ||
+        user_with_openid_exists?(params[:user_session]) 
+
+    if not_need_user_auto_creation
       create_user_session(params[:user_session])   
     else
       create_user(params[:user_session])
@@ -31,11 +34,11 @@ class UserSessionsController < Spree::BaseController
   private
   
   def user_with_openid_exists?(data)
-    data && data[:openid_identifier] && User.find_by_openid_identifier(data[:openid_identifier])
+    data && data[:openid_identifier] && !!User.find_by_openid_identifier(data[:openid_identifier])
   end
   
   def user_without_openid(data)
-    data || !data[:openid_identifier]
+    data && data[:openid_identifier].blank?
   end
   
   def create_user_session(data)

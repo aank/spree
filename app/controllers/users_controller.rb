@@ -9,7 +9,7 @@ class UsersController < Spree::BaseController
   
   actions :all, :except => [:index, :destroy]
 
-  def create 
+  def create
     @user = User.new(params[:user])
     @user.save do |result|
       if result
@@ -41,5 +41,14 @@ class UsersController < Spree::BaseController
   def add_openid_fields
     @extension_partials << 'openid_identifier'
   end
+
+  private
+
+    def object
+      @user = @current_user
+      @user ||= User.new(params[:user]) if params[:user]
+      @user ||= User.new
+      @user
+    end
 
 end

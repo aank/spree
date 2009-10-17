@@ -44,13 +44,6 @@ class User < ActiveRecord::Base
     return false if openid_identifier
     crypted_password.blank? || !password.blank?
   end
-
-  def object
-    @user = @current_user
-    @user ||= User.new(params[:user]) if params[:user]
-    @user ||= User.new
-    @user
-  end  
    
   # fetch persona from openid.sreg parameters returned by openid server if supported
   # http://openid.net/specs/openid-simple-registration-extension-1_0.html
