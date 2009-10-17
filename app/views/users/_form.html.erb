@@ -2,7 +2,7 @@
   <%= f.label :email, t("email") %><br />
   <%= f.text_field :email, :class => 'title'  %>
 </p>
-
+<% unless params[:openid_identifier] %>
 <p>
   <%= f.label :password, t("password") %><br />
   <%= f.password_field :password, :class => 'title'  %>
@@ -12,5 +12,6 @@
   <%= f.label :password_confirmation, t("password_confirmation", :default => t(:confirm)) %><br />
   <%= f.password_field :password_confirmation, :class => 'title' %>
 </p>
+<% end %>
 
 <%= render_extra_partials f %>

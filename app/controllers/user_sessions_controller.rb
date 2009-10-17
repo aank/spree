@@ -34,7 +34,8 @@ class UserSessionsController < Spree::BaseController
   private
   
   def user_with_openid_exists?(data)
-    data && data[:openid_identifier] && !!User.find_by_openid_identifier(data[:openid_identifier])
+    data && data[:openid_identifier] &&
+      !!User.find(:first, :conditions => ["openid_identifier LIKE ?", "%#{data[:openid_identifier]}%"])
   end
   
   def user_without_openid(data)
@@ -75,7 +76,6 @@ class UserSessionsController < Spree::BaseController
         flash[:notice] = t(:user_created_successfully)
         redirect_back_or_default account_url
       else
-        flash[:notice] = t(:fill_email)
         redirect_to :controller => :users, :action => :new, :user => {:openid_identifier => @user.openid_identifier}
       end
     end

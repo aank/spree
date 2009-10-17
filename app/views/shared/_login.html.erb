@@ -1,19 +1,22 @@
 <%= stylesheet_link_tag "open_id.css" %>
 <% form_tag user_session_path do  %>
-  <p>
-    <%= label :user_session, :login, t("email") %><br />
-    <%= text_field :user_session, 'login', :class => 'title' %>
-  </p>
-  <p>
-    <%= label :user_session, :password, t("password") %><br />
-    <%= password_field :user_session, 'password', :class => 'title' %>
-  </p>
-  <% if Spree::Config[:allow_openid] %>  
-    <p><%= t :or %></p>
+  <div id='login_via_login_password'>
     <p>
+      <%= label :user_session, :login, t("email") %><br />
+      <%= text_field :user_session, 'login', :class => 'title' %>
+    </p>
+    <p>
+      <%= label :user_session, :password, t("password") %><br />
+      <%= password_field :user_session, 'password', :class => 'title' %>
+    </p>
+  </div>
+  <% if Spree::Config[:allow_openid] %>
+    <div id='login_via_openid'>
+      <p>
         <%= label :user_session, :openid_identifier, t('OpenID', :default => 'OpenID') %><br /> 	
         <%= text_field :user_session, :openid_identifier, :class => "title openid_url", :size => 28 %>
-    </p>
+      </p>
+    </div>
   <% end %>
   <p>
   	<label>
@@ -24,4 +27,11 @@
 
   <p><%= submit_tag t("log_in"), :class => 'button primary'%></p>
 
+<% end %>
+
+<% if Spree::Config[:allow_openid] %>
+  <hr />
+  <p id='enable_login_via_openid'><a href='#'><%= t :enable_login_via_openid %></a></p>
+  <p id='enable_login_via_login_password'><a href='#'><%= t :enable_login_via_login_password %></a></p>
+  <%= javascript_include_tag 'open_id' %>
 <% end %>

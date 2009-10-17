@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
   end
   
   openid_required_fields [:email]
+  openid_optional_fields [:nickname]
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
