@@ -2,7 +2,7 @@
   <%= f.label :email, t("email") %><br />
   <%= f.text_field :email, :class => 'title'  %>
 </p>
-<% unless params[:openid_identifier] %>
+<% unless params[:user] && params[:user][:openid_identifier] %>
 <p>
   <%= f.label :password, t("password") %><br />
   <%= f.password_field :password, :class => 'title'  %>
