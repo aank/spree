@@ -1,6 +1,6 @@
 <%= stylesheet_link_tag "open_id.css" %>
 <% form_tag user_session_path do  %>
-  <div id='login_via_login_password'>
+  <div id='password-credentials'>
     <p>
       <%= label :user_session, :login, t("email") %><br />
       <%= text_field :user_session, 'login', :class => 'title' %>
@@ -11,10 +11,10 @@
     </p>
   </div>
   <% if Spree::Config[:allow_openid] %>
-    <div id='login_via_openid'>
+    <div id='openid-credentials'>
       <p>
         <%= label :user_session, :openid_identifier, t('OpenID', :default => 'OpenID') %><br /> 	
-        <%= text_field :user_session, :openid_identifier, :class => "title openid_url", :size => 28 %>
+        <%= text_field :user_session, :openid_identifier, :class => "openid_url", :size => 28 %>
       </p>
     </div>
   <% end %>

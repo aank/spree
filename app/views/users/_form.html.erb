@@ -2,16 +2,31 @@
   <%= f.label :email, t("email") %><br />
   <%= f.text_field :email, :class => 'title'  %>
 </p>
-<% unless params[:user] && params[:user][:openid_identifier] %>
-<p>
-  <%= f.label :password, t("password") %><br />
-  <%= f.password_field :password, :class => 'title'  %>
-</p>
+<div id="password-credentials">
+  <p>
+    <%= f.label :password, t("password") %><br />
+    <%= f.password_field :password, :class => 'title'  %>
+  </p>
 
-<p>
-  <%= f.label :password_confirmation, t("password_confirmation", :default => t(:confirm)) %><br />
-  <%= f.password_field :password_confirmation, :class => 'title' %>
-</p>
+  <p>
+    <%= f.label :password_confirmation, t("password_confirmation", :default => t(:confirm)) %><br />
+    <%= f.password_field :password_confirmation, :class => 'title' %>
+  </p>
+</div>
+
+<% if Spree::Config[:allow_openid] %>
+  <div <%= "id=openid-credentials" if @user.new_record? %> >
+    <p>
+      <%= f.label :openid_identifier, t('OpenID', :default => 'OpenID') %><br />
+      <%= f.text_field :openid_identifier, :class => 'openid_url' %>
+    </p>
+  </div>
+<% end %>
+
+<% if Spree::Config[:allow_openid] and @user.new_record? %>
+  <p id='enable_login_via_openid'><a href='#'><%= t :enable_login_via_openid %></a></p>
+  <p id='enable_login_via_login_password'><a href='#'><%= t :enable_login_via_login_password %></a></p>
+  <%= javascript_include_tag 'open_id' %>
 <% end %>
 
 <%= render_extra_partials f %>

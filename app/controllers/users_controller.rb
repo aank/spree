@@ -4,7 +4,7 @@ class UsersController < Spree::BaseController
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :initialize_extension_partials
-  before_filter :add_openid_fields
+
   ssl_required :new, :create, :edit, :update, :show
   
   actions :all, :except => [:index, :destroy]
@@ -36,10 +36,6 @@ class UsersController < Spree::BaseController
     else
       render :action => :edit
     end
-  end
-  
-  def add_openid_fields
-    @extension_partials << 'openid_identifier'
   end
 
   private
