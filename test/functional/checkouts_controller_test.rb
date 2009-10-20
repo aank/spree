@@ -73,5 +73,29 @@ class CheckoutsControllerTest < ActionController::TestCase
       end
       should_respond_with :success
     end
+  end  
+  
+  context "with a completed order" do
+    setup do
+      @order = create_complete_order
+    end
+    
+    context "on GET to :show" do
+      setup do
+        get :edit, :order_id => @order.number 
+      end
+      
+      should_redirect_to("login page") { login_path }
+      #should_respond_with :unauthorized 
+    end
+
+    context "on POST to :update" do
+      setup do
+        post :update, :order_id => @order.number 
+      end
+
+      should_redirect_to("login page") { login_path }
+      #should_respond_with :unauthorized 
+    end  
   end
 end
