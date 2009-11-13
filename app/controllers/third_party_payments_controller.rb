@@ -1,0 +1,2 @@
+class ThirdPartyPaymentsController < ApplicationController
+end

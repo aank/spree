@@ -1,4 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :third_party_txns
+
+  map.resources :third_party_payments
+
 
   # Loads all extension routes in the order they are specified.
   map.load_extension_routes
