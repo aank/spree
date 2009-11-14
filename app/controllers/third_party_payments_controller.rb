@@ -1,2 +1,0 @@
-class ThirdPartyPaymentsController < ApplicationController
-end

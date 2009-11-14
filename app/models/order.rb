@@ -67,12 +67,16 @@ class Order < ActiveRecord::Base
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
     after_transition :to => 'new', :do => :complete_order
+    after_transition :to => 'payment_pending', :do => :complete_order
     after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
     after_transition :to => 'resumed', :do => :restore_state 
 
     event :complete do
       transition :to => 'new', :from => 'in_progress'
+    end
+    event :pend_payment do 
+      transition :to => 'payment_pending', :from => 'in_progress'
     end
     event :cancel do
       transition :to => 'canceled', :if => :allow_cancel?

@@ -5,8 +5,11 @@ require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
   context "create" do
-    setup { Order.create }
+    setup { @order = Order.create }
     should_change("Checkout.count", :by => 1) { Checkout.count }
+    should "create shipment" do
+      assert(@order.shipments.first, "Shipment was not created")
+    end    
   end
 
   context "Order" do
@@ -50,14 +53,21 @@ class OrderTest < ActiveSupport::TestCase
     should "create default tax charge" do
       assert(@order.tax_charges.first, "Tax charge was not created")
     end
+    
+    context "pend_payment" do
+      setup { @order.pend_payment }
+      should_change("@order.state", :from => "in_progress", :to => "payment_pending") { @order.state }
+      should "create shipment" do
+        assert(@order.shipments.first, "Shipment was not created")
+      end
+      should "update checkout completed_at" do
+        assert(@order.checkout.completed_at, "Checkout#completed_at was not updated")
+      end
+    end
 
     context "complete" do
       setup { @order.complete }
       should_change("@order.state", :from => "in_progress", :to => "new") { @order.state }
-
-      should "create shipment" do
-        assert(@order.shipments.first, "Shipment was not created")
-      end
 
       should "update checkout completed_at" do
         assert(@order.checkout.completed_at, "Checkout#completed_at was not updated")

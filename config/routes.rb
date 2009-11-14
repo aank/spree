@@ -1,8 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :third_party_txns
-
-  map.resources :third_party_payments
-
 
   # Loads all extension routes in the order they are specified.
   map.load_extension_routes
@@ -47,6 +43,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :orders, :member => {:address_info => :get}, :has_many => [:line_items, :creditcards, :creditcard_payments], :has_one => :checkout
   map.resources :orders, :member => {:fatal_shipping => :get} do |order|
     order.resources :shipments, :member => {:shipping_method => :get}
+    order.resources :payments
   end
   #map.resources :shipments, :member => {:shipping_method => :any}
 
