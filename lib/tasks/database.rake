@@ -56,6 +56,25 @@ namespace :db do
     end
   end
 
+  desc "Dump a class to YML, give class name in square brackets, use rake -s for silent"
+  task :dump , [:clazz]  => :environment do  |t , args|
+    clazz = eval(args.clazz)
+    objects = {}
+    clazz.find( :all ).each do |obj|
+      attributes = obj.attributes
+      attributes.delete("created_at")   
+      attributes.delete("updated_at")   
+      name = attributes["name"] 
+      unless name
+        name = args.clazz 
+        name = name +   "_" + attributes["id"].to_s if attributes["id"]
+      end
+      name = name.gsub( " " , "_")
+      objects[name] = attributes
+    end
+    puts objects.to_yaml
+  end
+
   desc 'Create the database, load the schema, and initialize with the seed data'  
   task :setup => [ 'db:create', 'db:schema:load', 'db:seed' ]         
     
