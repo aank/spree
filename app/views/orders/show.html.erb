@@ -15,5 +15,6 @@
   <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
 
   <br/>
+  <%= button_to t('claim_order'), claim_order_url(@order) if can_claim?(@order, session[:order_token]) %>
   <%= link_to t('back_to_store'), products_path %>
 </div>

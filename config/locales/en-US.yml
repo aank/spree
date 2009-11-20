@@ -750,3 +750,5 @@ en-US:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones
+  claim_order: "Claim this order with your user account"
+  successfully_claimed: "Order was successfully claimed"

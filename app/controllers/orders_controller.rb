@@ -52,6 +52,13 @@ class OrdersController < Spree::BaseController
   destroy.response do |wants|
     wants.html { redirect_to(edit_object_url) } 
   end
+
+  def claim
+    load_object
+    @order.update_attribute("user_id", current_user) if current_user
+    flash.now[:notice] = t(:successfully_claimed)
+    render 'show'
+  end
   
   def can_access?
     return true unless order = load_object    
