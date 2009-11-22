@@ -29,12 +29,6 @@ namespace :db do
       require 'db/sample/users.rb'
     end
   end
-  
-  desc "Loading db/defaults for spree and each extension"
-  task :defaults => :environment do
-    Rake::Task["db:load_dir"].invoke( "default" ) 
-    puts "Default data has been loaded"
-  end
 
   desc "Loading db/sample for spree and each extension"
   task :sample => :environment do   # an invoke will not execute the task after defaults has already executed it
@@ -100,20 +94,17 @@ namespace :db do
     
     load_defaults  = Country.count == 0
     unless load_defaults    # ask if there are already Countries => default data hass been loaded
-      load_defaults = agree('Countries present, load default Data? [y]: ')
+      load_defaults = agree('Countries present, load sample data anyways? [y]: ')
     end
-    Rake::Task["db:defaults"].invoke if load_defaults
+    Rake::Task["db:seed"].invoke if load_defaults
     
     if RAILS_ENV == 'production' and Product.count > 0
-      load_sample = agree("WARNING: In Production and products exist in database, load sample data anyway [y] ?." )
+      load_sample = agree("WARNING: In Production and products exist in database, load sample data anyways? [y]:" )
     else
       load_sample = true if ENV['AUTO_ACCEPT'] 
       load_sample = agree('Load Sample Data? [y]: ') unless load_sample    
     end
     Rake::Task["db:sample"].invoke if load_sample
-
-    # invokes also all extensions seed, see db/seeds.rb
-    Rake::Task["db:seed"].invoke
 
     puts "Bootstrap Complete.\n\n"
   end

@@ -1,4 +1,5 @@
-#used to load default data, now a task (db:defaults) in extensions.rake
+Rake::Task["db:load_dir"].invoke( "default" ) 
+puts "Default data has been loaded"
 
 puts "Loading db/seeds.rb for each extension"
 extension_roots = Spree::ExtensionLoader.instance.load_extension_roots
