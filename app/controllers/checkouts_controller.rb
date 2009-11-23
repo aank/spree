@@ -215,24 +215,22 @@ class CheckoutsController < Spree::BaseController
   end
   
   def update_before
-    return false
-    # redirect_to "http://yahoo.com"
-    # return false
-    # # update user to current one if user has logged in
-    # @order.update_attribute(:user, current_user) if current_user
-    # 
-    # if (checkout_info = params[:checkout]) and not checkout_info[:coupon_code]
-    #   # overwrite any earlier guest checkout email if user has since logged in
-    #   checkout_info[:email] = current_user.email if current_user
-    # 
-    #   # and set the ip_address to the most recent one
-    #   checkout_info[:ip_address] = request.env['REMOTE_ADDR']
-    # 
-    #   check_bill_address
-    #   
-    #   check_ship_address
-    # 
-    # end
+
+    # update user to current one if user has logged in
+    @order.update_attribute(:user, current_user) if current_user
+    
+    if (checkout_info = params[:checkout]) and not checkout_info[:coupon_code]
+      # overwrite any earlier guest checkout email if user has since logged in
+      checkout_info[:email] = current_user.email if current_user
+    
+      # and set the ip_address to the most recent one
+      checkout_info[:ip_address] = request.env['REMOTE_ADDR']
+    
+      check_bill_address
+      
+      check_ship_address
+    
+    end
   end
   
   
