@@ -219,6 +219,7 @@ en-US:
   charge_total: Charge Total
   charged: Charged
   checkout: Checkout
+  checkout_as_guest: "Checkout as guest"
   city: City
   clone: Clone
   code: Code
@@ -244,6 +245,7 @@ en-US:
   coupons_description: Manage coupons
   create: Create
   create_a_new_account: "Create a new account"
+  create_account_and_continue: "Create account and continue"
   create_user_account: Create User Account
   created_successfully: "Created Successfully"
   credit_card: "Credit Card"
@@ -610,6 +612,7 @@ en-US:
   sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Sales Totals"
   sales_totals_description: "Sales Total For All Orders"
+  save_and_continue: "Save and continue"
   save_preferences: Save Preferences
   search: Search
   search_results: "Search results for '{{keywords}}'"
@@ -639,6 +642,7 @@ en-US:
   shipping_method: "Shipping Method"
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
+  view_shipping_options: "View shipping options"
   shipping_rates: "Shipping Rates"
   shipping_rates_description: "Manage shipping rates"
   shipping_total: "Shipping Total"
@@ -745,6 +749,7 @@ en-US:
   year: "Year"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
+  your_email: Your email
   zip: Zip
   zone: Zone
   zone_based: "Zone Based"

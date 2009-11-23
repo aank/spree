@@ -6,7 +6,6 @@
       :background= "transparent" url(!image_small) "top left no-repeat"
       :margin-bottom 0.25em
   div.inner
-    :display none
     :padding 10px 2px
 
 div#checkout
@@ -22,6 +21,11 @@ div#checkout
     :padding 0px
     :background = !white
     :border 1px solid #EAE8E3
+  h3,h4
+    :margin 2em 0em 1em 0px
+  h5
+    :font-weight normal
+    :margin 0px 0px 0px 160px
   p
     :clear both
     :margin-bottom 15px
@@ -30,6 +34,8 @@ div#checkout
       :width 150px
       :position relative
       :top 5px
+      :text-align right
+      :padding-right 10px
     span.req
       :color red
       :margin-left 2px
@@ -142,6 +148,10 @@ div#checkout
   input#checkout_same_address
     :margin-top 8px
     :width 15px
+  .form-buttons
+    :padding-top 1em
+    :width 380px
+    :text-align right
 
 div#order
   table.order-summary
@@ -159,6 +169,9 @@ tbody#subtotal
   
 tbody#order-credits
   :color #f00
+  
+img#creditcard-image
+  margin-bottom: 15px
   
 div#checkout-summary
   :float right

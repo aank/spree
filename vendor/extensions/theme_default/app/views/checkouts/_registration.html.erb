@@ -1,60 +1,25 @@
-<h2><%= t("registration")%></h2>
-<div class="inner">
-  <div id="registration_error"></div>
-  <div id="registration_choice">          
-    <h3><%= t("register_or_guest") %></h3>    
+<div id='registration'>
+  <h2><%= t("registration")%></h2>
+  <div class="inner">
     <p>
-      <input id="choose_register" type="radio" name="choose_registration" value="register" />
-      <label for="choose_register"><%= t("register") %></label>
-    </p>    	 
-    <p>
-      <input id="choose_existing" type="radio" name="choose_registration" value="existing"/>
-      <label for="choose_existing"><%= t("existing_customer") %></label>
-    </p>    	 
-    <p>
-      <input id="choose_guest" type="radio" name="choose_registration" value="guest"/>
-      <label for="choose_guest"><%= t("proceed_as_guest") %></label>
-    </p>    	 
-  </div>
-  <div id="registration_input">
-    <div id="existing_user">
-      <h3><%= t("already_registered") %></h3>
-      <div id="login">
-        <p>
-          <%= label :user_session, :login, t("email") %>
-          <%= text_field :user_session, 'login', :class => 'required' %><span class="req">*</span>
-        </p>
-        <p>
-          <%= label :user_session, :password, t("password") %>
-          <%= password_field :user_session, 'password', :class => 'required' %><span class="req">*</span>
-        </p>
-      </div>
+      <%= label :user_session, :login, t("your_email") %>
+      <%= text_field_tag 'user_session[login]', current_user.blank? ? '' : current_user.email, :class => 'title required' %><span class="req">*</span>
+    </p>
+    <h5>Already have an account? <%=  link_to t('login'), login_path, :id => 'registration-login-link' %></h5>
+    <div class="form-buttons">
+      <%= submit_tag(t('checkout_as_guest'), :name => 'guest_checkout', :class => 'continue button primary')%>
     </div>
-    <div id="new_user">
-      <h3><%= t("create_user_account") %></h3>
-    	<p>                                               
-  	  <label for="<%= t("email") %>"><%= t("email") %></label> 
-      	  <%= text_field :user, 'email', :class => 'required' -%><span class="req">*</span>
-      	</p>
-      	<p>
-      	  <label for="<%= t("password") %>"><%= t("password") %></label>
-      	  <%= password_field :user, 'password', :class => 'required' %><span class="req">*</span> 
-      	</p>
-      	<p>
-      	  <label for="<%= t("confirm") %>"><%= t("confirm") %></label> 
-      	  <%= password_field :user, 'password_confirmation', :class => 'required' %><span class="req">*</span> 
-      	</p>
-      </div>
-      <div id="guest_user">
-        <h3><%= t("guest_user_account") %></h3>
-        <p>
-          <label for="<%= t("email") %>"><%= t("email") %></label> 
-          <%= checkout_form.text_field :email, :class => 'required' -%><span class="req">*</span>
-        </p>
-      </div>
+    <h3>Optional: Set up an account to save time next time</h3>
+    <p>
+      <%= label :user_session, :password, t("password") %>
+      <%= password_field :user_session, 'password', :class => 'title required' %>
+    </p>
+    <p>
+      <%= label :user_session, :password_confirmation, t("confirm_password") %>
+      <%= password_field :user_session, 'password_confirmation', :class => 'title required' %>
+    </p>
+    <div class="form-buttons">
+      <%= submit_tag(t('create_account_and_continue'), :name => 'create_account', :class => 'continue button primary')%>
     </div>
-  <div id="already_logged_in"><p>You are already logged in.</p></div>
-  <div class="form-buttons">
-    <input id="continue_registration" type="button" class="button primary" value="<%=t("continue") %>"/>
   </div>
 </div>

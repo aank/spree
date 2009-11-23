@@ -8,7 +8,7 @@
 <%= error_messages_for :checkout %>
 
 <% checkout_steps.each do |step| %>
-  <div id="<%=step%>" class="checkout disabled">
+  <div id="<%=step%>" class="checkout">
     <%= render step, :checkout_form => checkout_form %>  
   </div>
 <% end %>

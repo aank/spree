@@ -3,7 +3,7 @@
   <div id='password-credentials'>
     <p>
       <%= label :user_session, :login, t("email") %><br />
-      <%= text_field :user_session, 'login', :class => 'title' %>
+      <%= text_field_tag 'user_session[login]', params[:email], :class => 'title' %>
     </p>
     <p>
       <%= label :user_session, :password, t("password") %><br />

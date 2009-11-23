@@ -1,6 +1,10 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   
+  def logged_in?
+    not current_user.blank?
+  end
+  
   # helper to determine if its appropriate to show the store menu
   def store_menu?
     return true unless %w{thank_you}.include? @current_action

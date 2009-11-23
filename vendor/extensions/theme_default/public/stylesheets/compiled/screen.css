@@ -1316,6 +1316,11 @@ div#checkout {
     padding: 0px;
     background: white;
     border: 1px solid #EAE8E3; }
+  div#checkout h3, div#checkout h4 {
+    margin: 2em 0em 1em 0px; }
+  div#checkout h5 {
+    font-weight: normal;
+    margin: 0px 0px 0px 160px; }
   div#checkout p {
     clear: both;
     margin-bottom: 15px; }
@@ -1323,7 +1328,9 @@ div#checkout {
       float: left;
       width: 150px;
       position: relative;
-      top: 5px; }
+      top: 5px;
+      text-align: right;
+      padding-right: 10px; }
     div#checkout p span.req {
       color: red;
       margin-left: 2px;
@@ -1363,7 +1370,6 @@ div#checkout {
         background: transparent url('/images/steps/1_small.png') top left no-repeat;
         margin-bottom: 0.25em; }
     div#checkout #registration div.inner {
-      display: none;
       padding: 10px 2px; }
     div#checkout #registration div#registration_choice {
       float: left;
@@ -1382,7 +1388,6 @@ div#checkout {
         background: transparent url('/images/steps/2_small.png') top left no-repeat;
         margin-bottom: 0.25em; }
     div#checkout #billing div.inner {
-      display: none;
       padding: 10px 2px; }
   div#checkout #shipping {
     background: transparent url('/images/steps/3.png') top right no-repeat; }
@@ -1392,7 +1397,6 @@ div#checkout {
         background: transparent url('/images/steps/3_small.png') top left no-repeat;
         margin-bottom: 0.25em; }
     div#checkout #shipping div.inner {
-      display: none;
       padding: 10px 2px; }
     div#checkout #shipping span#clear_same_address {
       clear: both;
@@ -1417,7 +1421,6 @@ div#checkout {
         background: transparent url('/images/steps/4_small.png') top left no-repeat;
         margin-bottom: 0.25em; }
     div#checkout #shipping_method div.inner {
-      display: none;
       padding: 10px 2px; }
     div#checkout #shipping_method div.inner {
       padding-top: 0px; }
@@ -1431,7 +1434,6 @@ div#checkout {
         background: transparent url('/images/steps/5_small.png') top left no-repeat;
         margin-bottom: 0.25em; }
     div#checkout #payment div.inner {
-      display: none;
       padding: 10px 2px; }
     div#checkout #payment p select {
       width: 75px; }
@@ -1443,7 +1445,6 @@ div#checkout {
         background: transparent url('/images/steps/6_small.png') top left no-repeat;
         margin-bottom: 0.25em; }
     div#checkout #confirmation div.inner {
-      display: none;
       padding: 10px 2px; }
     div#checkout #confirmation table.order-summary .price, div#checkout #confirmation table.order-summary .qty {
       width: 165px; }
@@ -1478,6 +1479,10 @@ div#checkout {
   div#checkout input#checkout_same_address {
     margin-top: 8px;
     width: 15px; }
+  div#checkout .form-buttons {
+    padding-top: 1em;
+    width: 380px;
+    text-align: right; }
 
 div#order table.order-summary .price, div#order table.order-summary .qty {
   width: 165px; }
@@ -1491,6 +1496,9 @@ div#order table.order-summary .total_display {
 
 tbody#order-credits {
   color: #f00; }
+
+img#creditcard-image {
+  margin-bottom: 15px; }
 
 div#checkout-summary {
   float: right;
