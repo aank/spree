@@ -9,132 +9,74 @@ class CheckoutsController < Spree::BaseController
   ssl_required :update, :edit
 
   # alias original r_c method so we can handle any (gateway) exceptions that might be thrown
-  alias :rc_update :update
-  def update
-    begin
-      rc_update
-    rescue Spree::GatewayError => ge
-      logger.debug("#{ge}:\n#{ge.backtrace.join("\n")}")
-      flash[:error] = t("unable_to_authorize_credit_card") + ": #{ge.message}"
-      redirect_to edit_object_url and return
-    rescue Exception => oe
-      logger.debug("#{oe}:\n#{oe.backtrace.join("\n")}")
-      flash[:error] = t("unable_to_authorize_credit_card") + ": #{oe.message}"
-      logger.unknown "#{flash[:error]}  #{oe.backtrace.join("\n")}"
-      redirect_to edit_object_url and return
-    end
-  end
+  # alias :rc_update :update
+  # def update
+  #   begin
+  #     rc_update
+  #   rescue Spree::GatewayError => ge
+  #     logger.debug("#{ge}:\n#{ge.backtrace.join("\n")}")
+  #     flash[:error] = t("unable_to_authorize_credit_card") + ": #{ge.message}"
+  #     redirect_to edit_object_url and return
+  #   rescue Exception => oe
+  #     logger.debug("#{oe}:\n#{oe.backtrace.join("\n")}")
+  #     flash[:error] = t("unable_to_authorize_credit_card") + ": #{oe.message}"
+  #     logger.unknown "#{flash[:error]}  #{oe.backtrace.join("\n")}"
+  #     redirect_to edit_object_url and return
+  #   end
+  # end    
   
-
+  update.before :enable_validation_groups
+  
   update do
     flash nil
     success.wants.html do
-      if @order.reload.checkout_complete 
-        if current_user
-          current_user.update_attribute(:bill_address, @order.bill_address)
-          current_user.update_attribute(:ship_address, @order.ship_address)
-        end
-        flash[:notice] = t('order_processed_successfully')
-        order_params = {:checkout_complete => true}
-        order_params[:order_token] = @order.token unless @order.user
-        session[:order_id] = nil
-        redirect_to order_url(@order, order_params) and next
-      else
-        # this means a failed filter which should have thrown an exception
-        flash[:notice] = "Unexpected error condition -- please contact site support"
-        redirect_to edit_object_url and next
-      end
+      # TODO - determine the correct step to show, etc.
+      render 'edit'
     end
+    # success.wants.html do
+    #   if @order.reload.checkout_complete 
+    #     if current_user
+    #       current_user.update_attribute(:bill_address, @order.bill_address)
+    #       current_user.update_attribute(:ship_address, @order.ship_address)
+    #     end
+    #     flash[:notice] = t('order_processed_successfully')
+    #     order_params = {:checkout_complete => true}
+    #     order_params[:order_token] = @order.token unless @order.user
+    #     session[:order_id] = nil
+    #     redirect_to order_url(@order, order_params) and next
+    #   else
+    #     # this means a failed filter which should have thrown an exception
+    #     flash[:notice] = "Unexpected error condition -- please contact site support"
+    #     redirect_to edit_object_url and next
+    #   end
+    # end
 
-    success.wants.js do
-      @order.reload
-      render :json => { :order_total => number_to_currency(@order.total),
-                        :charge_total => number_to_currency(@order.charge_total),
-                        :credit_total => number_to_currency(@order.credit_total),
-                        :charges => charge_hash,
-                        :credits => credit_hash,
-                        :available_methods => rate_hash}.to_json,
-             :layout => false
-    end
+    # success.wants.js do
+    #   @order.reload
+    #   render :json => { :order_total => number_to_currency(@order.total),
+    #                     :charge_total => number_to_currency(@order.charge_total),
+    #                     :credit_total => number_to_currency(@order.credit_total),
+    #                     :charges => charge_hash,
+    #                     :credits => credit_hash,
+    #                     :available_methods => rate_hash}.to_json,
+    #          :layout => false
+    # end
 
-    failure.wants.html do
-      flash[:notice] = "Unexpected failure in card authorization -- please contact site support"
-      redirect_to edit_object_url and next
-    end
-    failure.wants.js do
-      render :json => "Unexpected failure in card authorization -- please contact site support"
-    end
-  end
-
-<<<<<<< HEAD:app/controllers/checkouts_controller.rb
-  update.before do
-    # update user to current one if user has logged in
-    @order.update_attribute(:user, current_user) if current_user
-
-    if (checkout_info = params[:checkout]) and not checkout_info[:coupon_code]
-      # overwrite any earlier guest checkout email if user has since logged in
-      checkout_info[:email] = current_user.email if current_user
-
-      # and set the ip_address to the most recent one
-      checkout_info[:ip_address] = request.env['REMOTE_ADDR']
-
-      # check whether the bill address has changed, and start a fresh record if
-      # we were using the address stored in the current user.
-      if checkout_info[:bill_address_attributes] and @checkout.bill_address
-        # always include the id of the record we must write to - ajax can't refresh the form
-        checkout_info[:bill_address_attributes][:id] = @checkout.bill_address.id
-        new_address = Address.new checkout_info[:bill_address_attributes]
-        if not @checkout.bill_address.same_as?(new_address) and
-             current_user and @checkout.bill_address == current_user.bill_address
-          # need to start a new record, so replace the existing one with a blank
-          checkout_info[:bill_address_attributes].delete :id
-          @checkout.bill_address = Address.new
-        end
-      end
-
-      # check whether the ship address has changed, and start a fresh record if
-      # we were using the address stored in the current user.
-      if checkout_info[:shipment_attributes][:address_attributes] and @order.shipment.address
-        # always include the id of the record we must write to - ajax can't refresh the form
-        checkout_info[:shipment_attributes][:address_attributes][:id] = @order.shipment.address.id
-        new_address = Address.new checkout_info[:shipment_attributes][:address_attributes]
-        if not @order.shipment.address.same_as?(new_address) and
-             current_user and @order.shipment.address == current_user.ship_address
-          # need to start a new record, so replace the existing one with a blank
-          checkout_info[:shipment_attributes][:address_attributes].delete :id
-          @order.shipment.address = Address.new
-        end
-      end
-
-      # update description on shipping method
-      shipping_method_id = checkout_info[:shipment_attributes][:shipping_method_id]
-      if shipping_method_id
-        new_shipping_method = ShippingMethod.find(shipping_method_id)
-        if new_shipping_method
-          @order.shipping_charges.each do |shipping_charge|
-            shipping_charge.update_attribute(:description, new_shipping_method.name)
-          end
-        end
-      end
-
-    end
-
-		#mark checkout as confirmed (if applicable)
-		@checkout.confirmed = (params[:final_answer] == "yes")
- 
-   end
-=======
-  update.before :update_before
->>>>>>> Checkout pages styling:app/controllers/checkouts_controller.rb
-
-  update.after do
-    @order.save!		# expect messages here
+    # failure.wants.html do
+    #   flash.now[:notice] = "Unexpected failure in card authorization -- please contact site support"
+    #   render 'edit'
+    #   #redirect_to edit_object_url and next
+    # end
+    # failure.wants.js do
+    #   render :json => "Unexpected failure in card authorization -- please contact site support"
+    # end
   end
 
   private
   def object
     return @object if @object
     @object = parent_object.checkout
+    @object.step ||= params[:step]
     unless params[:checkout] and params[:checkout][:coupon_code]
       # do not create these defaults if we're merely updating coupon code, otherwise we'll have a validation error
       if user = parent_object.user || current_user
@@ -157,6 +99,7 @@ class CheckoutsController < Spree::BaseController
       default_country = Country.find Spree::Config[:default_country_id]
     end
     @states = default_country.states.sort
+    @step = params[:step]
   end
 
   def rate_hash
@@ -182,56 +125,63 @@ class CheckoutsController < Spree::BaseController
     redirect_to order_url(parent_object) if @order.checkout_complete
   end 
   
-  def check_bill_address
-    # check whether the bill address has changed, and start a fresh record if
-    # we were using the address stored in the current user.
-    if checkout_info[:bill_address_attributes] and @checkout.bill_address
-      # always include the id of the record we must write to - ajax can't refresh the form
-      checkout_info[:bill_address_attributes][:id] = @checkout.bill_address.id
-      new_address = Address.new checkout_info[:bill_address_attributes]
-      if not @checkout.bill_address.same_as?(new_address) and
-           current_user and @checkout.bill_address == current_user.bill_address
-        # need to start a new record, so replace the existing one with a blank
-        checkout_info[:bill_address_attributes].delete :id
-        @checkout.bill_address = Address.new
-      end
+  def enable_validation_groups 
+    begin
+      @checkout.enable_validation_group params[:step].to_sym
+    rescue Exception => e
     end
   end
   
-  def check_ship_address
-    # check whether the ship address has changed, and start a fresh record if
-    # we were using the address stored in the current user.
-    if checkout_info[:shipment_attributes][:address_attributes] and @order.shipment.address
-      # always include the id of the record we must write to - ajax can't refresh the form
-      checkout_info[:shipment_attributes][:address_attributes][:id] = @order.shipment.address.id
-      new_address = Address.new checkout_info[:shipment_attributes][:address_attributes]
-      if not @order.shipment.address.same_as?(new_address) and
-           current_user and @order.shipment.address == current_user.ship_address
-        # need to start a new record, so replace the existing one with a blank
-        checkout_info[:shipment_attributes][:address_attributes].delete :id
-        @order.shipment.address = Address.new
-      end
-    end
-  end
+  # def check_bill_address
+  #   # check whether the bill address has changed, and start a fresh record if
+  #   # we were using the address stored in the current user.
+  #   if checkout_info[:bill_address_attributes] and @checkout.bill_address
+  #     # always include the id of the record we must write to - ajax can't refresh the form
+  #     checkout_info[:bill_address_attributes][:id] = @checkout.bill_address.id
+  #     new_address = Address.new checkout_info[:bill_address_attributes]
+  #     if not @checkout.bill_address.same_as?(new_address) and
+  #          current_user and @checkout.bill_address == current_user.bill_address
+  #       # need to start a new record, so replace the existing one with a blank
+  #       checkout_info[:bill_address_attributes].delete :id
+  #       @checkout.bill_address = Address.new
+  #     end
+  #   end
+  # end
+  # 
+  # def check_ship_address
+  #   # check whether the ship address has changed, and start a fresh record if
+  #   # we were using the address stored in the current user.
+  #   if checkout_info[:shipment_attributes][:address_attributes] and @order.shipment.address
+  #     # always include the id of the record we must write to - ajax can't refresh the form
+  #     checkout_info[:shipment_attributes][:address_attributes][:id] = @order.shipment.address.id
+  #     new_address = Address.new checkout_info[:shipment_attributes][:address_attributes]
+  #     if not @order.shipment.address.same_as?(new_address) and
+  #          current_user and @order.shipment.address == current_user.ship_address
+  #       # need to start a new record, so replace the existing one with a blank
+  #       checkout_info[:shipment_attributes][:address_attributes].delete :id
+  #       @order.shipment.address = Address.new
+  #     end
+  #   end
+  # end
   
-  def update_before
-
-    # update user to current one if user has logged in
-    @order.update_attribute(:user, current_user) if current_user
-    
-    if (checkout_info = params[:checkout]) and not checkout_info[:coupon_code]
-      # overwrite any earlier guest checkout email if user has since logged in
-      checkout_info[:email] = current_user.email if current_user
-    
-      # and set the ip_address to the most recent one
-      checkout_info[:ip_address] = request.env['REMOTE_ADDR']
-    
-      check_bill_address
-      
-      check_ship_address
-    
-    end
-  end
+  # def update_before
+  # 
+  #   # update user to current one if user has logged in
+  #   @order.update_attribute(:user, current_user) if current_user
+  #   
+  #   if (checkout_info = params[:checkout]) and not checkout_info[:coupon_code]
+  #     # overwrite any earlier guest checkout email if user has since logged in
+  #     checkout_info[:email] = current_user.email if current_user
+  #   
+  #     # and set the ip_address to the most recent one
+  #     checkout_info[:ip_address] = request.env['REMOTE_ADDR']
+  #   
+  #     check_bill_address
+  #     
+  #     check_ship_address
+  #   
+  #   end
+  # end
   
   
 end

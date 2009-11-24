@@ -1,6 +1,8 @@
 class Checkout < ActiveRecord::Base  
-  before_save :authorize_creditcard, :unless => "Spree::Config[:auto_capture]"
-  before_save :capture_creditcard, :if => "Spree::Config[:auto_capture]"
+  extend ValidationGroup::ActiveRecord::ActsMethods
+  #ActiveRecord::Errors.send :include, ValidationGroup::ActiveRecord::Errors
+  #before_save :authorize_creditcard, :unless => "Spree::Config[:auto_capture]"
+  #before_save :capture_creditcard, :if => "Spree::Config[:auto_capture]"
   after_save :process_coupon_code
   
   belongs_to :order
@@ -17,8 +19,26 @@ class Checkout < ActiveRecord::Base
 
   validates_presence_of :order_id
 
+  validation_group :billing, :fields=>[:bill_address_firstname, :bill_address_lastname, :bill_address_phone, 
+                                       :bill_address_zipcode, :bill_address_state, :bill_address_lastname, 
+                                       :bill_address_address1, :bill_address_city, :bill_address_statename, 
+                                       :bill_address_zipcode]
+  validation_group :shipping, :fields=>[:shipment]
+
   def completed_at
     order.completed_at
+  end
+  
+  alias :ar_valid? :valid?
+  def valid?
+    # will perform partial validation when @checkout.enabled_validation_group :step is called 
+    result = ar_valid?
+    return result unless validation_group_enabled?
+    
+    relevant_errors = errors.select { |attr, msg| @current_validation_fields.include?(attr.to_sym) }
+    errors.clear
+    relevant_errors.each { |attr, msg| errors.add(attr, msg) }
+    relevant_errors.empty? 
   end
 
   private
