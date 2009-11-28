@@ -1,6 +1,7 @@
 class CheckoutsController < Spree::BaseController
   include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
   before_filter :load_data
+  before_filter :set_state
   before_filter :prevent_editing_complete_order, :only => [:edit, :update]
 
   resource_controller :singleton
@@ -26,6 +27,7 @@ class CheckoutsController < Spree::BaseController
   # end    
   
   update.before :enable_validation_groups
+  update.after :next_step
   
   update do
     flash nil
@@ -76,7 +78,6 @@ class CheckoutsController < Spree::BaseController
   def object
     return @object if @object
     @object = parent_object.checkout
-    @object.step ||= params[:step]
     unless params[:checkout] and params[:checkout][:coupon_code]
       # do not create these defaults if we're merely updating coupon code, otherwise we'll have a validation error
       if user = parent_object.user || current_user
@@ -99,26 +100,35 @@ class CheckoutsController < Spree::BaseController
       default_country = Country.find Spree::Config[:default_country_id]
     end
     @states = default_country.states.sort
-    @step = params[:step]
   end
 
-  def rate_hash
-    fake_shipment = Shipment.new :order => @order, :address => @order.ship_address
-    @order.shipping_methods.collect do |ship_method|
-      fake_shipment.shipping_method = ship_method
-      { :id   => ship_method.id,
-        :name => ship_method.name,
-        :rate => number_to_currency(ship_method.calculate_cost(fake_shipment)) }
-    end
+  def set_state
+    object.state = @step = params[:step] || Checkout.state_machines[:state].initial_state(nil).name
+    object.save(false)
   end
-
-  def charge_hash
-    Hash[*@order.charges.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]
+  
+  def next_step
+    @checkout.next!
+    @step = @checkout.state
   end
-
-  def credit_hash
-    Hash[*@order.credits.select {|c| c.amount !=0 }.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]
-  end
+  
+  # def rate_hash
+  #   fake_shipment = Shipment.new :order => @order, :address => @order.ship_address
+  #   @order.shipping_methods.collect do |ship_method|
+  #     fake_shipment.shipping_method = ship_method
+  #     { :id   => ship_method.id,
+  #       :name => ship_method.name,
+  #       :rate => number_to_currency(ship_method.calculate_cost(fake_shipment)) }
+  #   end
+  # end
+  # 
+  # def charge_hash
+  #   Hash[*@order.charges.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]
+  # end
+  # 
+  # def credit_hash
+  #   Hash[*@order.credits.select {|c| c.amount !=0 }.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]
+  # end
   
   def prevent_editing_complete_order      
     load_object

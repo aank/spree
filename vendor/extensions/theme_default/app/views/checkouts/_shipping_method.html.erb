@@ -2,22 +2,23 @@
   <h2><%= t("shipping_method") %></h2>
   <% checkout_form.fields_for :shipment do |shipment| %>     
     <div class="inner">
-      <% if @order.shipping_methods.blank? %>
-        <p><%= checkout_form.submit t('view_shipping_options'), :name => 'refresh' %></p>
-      <% else %>
-        <div id="methods">
-          <%= @order.shipping_methods.inspect %>
-        </div>
-      <% end %>
-      <div class="error">
-        <%= t('unable_ship_method') %>
+      <div id="methods">
+        <% @order.shipping_methods.each do |shipping_method| %>
+          <p>
+            <%= shipment.radio_button("shipping_method_id", shipping_method.id) %>
+            <%= shipping_method.name %>
+          </p>
+        <% end %>
       </div>
       <% if Spree::Config[:shipping_instructions] %>
         <p id="minstrs">
           <label for=""><%= t("shipping_instructions") %></label>
-          <%= checkout_form.text_area :special_instructions, :cols => 40, :rows => 7 -%>
+          <%= shipment.text_area :special_instructions, :cols => 40, :rows => 7 -%>
         </p>
       <% end %>
+    </div>
+    <div class="form-buttons">
+      <input type="submit" class="continue button primary" value="<%=t("save_and_continue") %>"/>
     </div>
   <% end %>
 </div>

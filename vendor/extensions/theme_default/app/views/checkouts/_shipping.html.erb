@@ -3,7 +3,6 @@
     <% shipment.fields_for :address do |address| %>
       <h2><%= t("shipping_address")%></h2>
       <div class="inner">
-      	<p><label for="checkout_same_address" id="use_billing"><%= t("use_billing_address") %></label><input id="checkout_same_address" name="checkout_same_address" type="checkbox" /></p> 
       	<p id="sfname">
       		<label for="<%= t("first_name") %>"><%= t("first_name") %></label>
       		<%= address.text_field :firstname, :class => 'required' -%><span class="req">*</span>
@@ -29,8 +28,7 @@
               <label for="<%= t("state") %>"><%= t("state") %></label>
               <span id="sstate">
                 <% if @checkout.shipment.address.state.present? %>
-      		<%= collection_select("checkout[shipment_attributes][address_attributes]", 
-                                        :state_id, 
+      		<%= address.collection_select(:state_id, 
                                         @states, 
                                         :id, 
                                         :name, 
@@ -63,7 +61,7 @@
         <% end %>
       </div>
       <div class="form-buttons">
-        <input type="button" class="continue button primary" value="<%=t("save_and_continue") %>"/>
+        <input type="submit" class="continue button primary" value="<%=t("save_and_continue") %>"/>
       </div>
     <% end %>
   <% end %>

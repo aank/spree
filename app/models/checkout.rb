@@ -8,9 +8,11 @@ class Checkout < ActiveRecord::Base
   belongs_to :order
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
   has_one :shipment, :through => :order, :source => :shipments, :order => "shipments.created_at ASC"                       
+  has_one :creditcard
   
   accepts_nested_attributes_for :bill_address
   accepts_nested_attributes_for :shipment
+  accepts_nested_attributes_for :creditcard
 
   # for memory-only storage of creditcard details
   attr_accessor :creditcard    
@@ -23,7 +25,11 @@ class Checkout < ActiveRecord::Base
                                        :bill_address_zipcode, :bill_address_state, :bill_address_lastname, 
                                        :bill_address_address1, :bill_address_city, :bill_address_statename, 
                                        :bill_address_zipcode]
-  validation_group :shipping, :fields=>[:shipment]
+
+  validation_group :shipping, :fields=>[:shipment_address_firstname, :shipment_address_lastname, :shipment_address_phone, 
+                                        :shipment_address_zipcode, :shipment_address_state, :shipment_address_lastname, 
+                                        :shipment_address_address1, :shipment_address_city, :shipment_address_statename, 
+                                        :shipment_address_zipcode]
 
   def completed_at
     order.completed_at
@@ -40,8 +46,25 @@ class Checkout < ActiveRecord::Base
     relevant_errors.each { |attr, msg| errors.add(attr, msg) }
     relevant_errors.empty? 
   end
+  
+  # checkout state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
+  state_machine :initial => 'billing' do
+    after_transition :to => 'shipping', :do => :clone_billing_address    
+    event :next do
+      transition :to => 'shipping', :from  => 'billing'
+      transition :to => 'shipping_method', :from  => 'shipping'
+      transition :to => 'payment', :from => 'shipping_method'
+      transition :to => 'complete', :from => 'payment'
+    end
+  end
+  
 
   private
+  def clone_billing_address
+    shipment.address = bill_address.clone if shipment.address.firstname.nil?
+    shipment.save
+  end
+  
   def authorize_creditcard
     return unless process_creditcard?
     cc = Creditcard.new(creditcard.merge(:address => self.bill_address, :checkout => self))
