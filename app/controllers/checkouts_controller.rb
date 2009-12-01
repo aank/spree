@@ -2,14 +2,14 @@ class CheckoutsController < Spree::BaseController
   include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
   before_filter :load_data
   before_filter :set_state
-  before_filter :prevent_editing_complete_order, :only => [:edit, :update]
 
   resource_controller :singleton
+  actions :show, :edit, :update
   belongs_to :order
 
   ssl_required :update, :edit
   
-  # GET is invalid but we'll assume a bookmark or user error and just redirect to edit (assuming checkout is still in progress)           
+  # GET /checkout is invalid but we'll assume a bookmark or user error and just redirect to edit (assuming checkout is still in progress)           
   show.wants.html { redirect_to edit_object_url }
 
   # alias original r_c method so we can handle any (gateway) exceptions that might be thrown
@@ -102,7 +102,9 @@ class CheckoutsController < Spree::BaseController
     else
       default_country = Country.find Spree::Config[:default_country_id]
     end
-    @states = default_country.states.sort
+    @states = default_country.states.sort                           
+    # prevent editing of a complete checkout  
+    redirect_to order_url(parent_object) if parent_object.checkout_complete
   end
 
   def set_state
@@ -132,12 +134,7 @@ class CheckoutsController < Spree::BaseController
   # def credit_hash
   #   Hash[*@order.credits.select {|c| c.amount !=0 }.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]
   # end
-  
-  def prevent_editing_complete_order      
-    load_object
-    redirect_to order_url(parent_object) if @order.checkout_complete
-  end 
-  
+    
   def enable_validation_groups 
     begin
       @checkout.enable_validation_group params[:step].to_sym
