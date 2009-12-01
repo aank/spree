@@ -15,7 +15,7 @@ class Checkout < ActiveRecord::Base
   accepts_nested_attributes_for :creditcard
 
   # for memory-only storage of creditcard details
-  attr_accessor :creditcard    
+  #attr_accessor :creditcard    
   attr_accessor :coupon_code
 	attr_accessor :confirmed
 
@@ -29,7 +29,9 @@ class Checkout < ActiveRecord::Base
   validation_group :shipping, :fields=>[:shipment_address_firstname, :shipment_address_lastname, :shipment_address_phone, 
                                         :shipment_address_zipcode, :shipment_address_state, :shipment_address_lastname, 
                                         :shipment_address_address1, :shipment_address_city, :shipment_address_statename, 
-                                        :shipment_address_zipcode]
+                                        :shipment_address_zipcode]  
+                                        
+  validation_group :payment, :fields=>[:creditcard_number, :creditcard_month, :creditcard_year, :creditcard_verification_value]
 
   def completed_at
     order.completed_at

@@ -8,6 +8,9 @@ class CheckoutsController < Spree::BaseController
   belongs_to :order
 
   ssl_required :update, :edit
+  
+  # GET is invalid but we'll assume a bookmark or user error and just redirect to edit (assuming checkout is still in progress)           
+  show.wants.html { redirect_to edit_object_url }
 
   # alias original r_c method so we can handle any (gateway) exceptions that might be thrown
   # alias :rc_update :update
