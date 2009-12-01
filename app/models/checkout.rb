@@ -51,7 +51,8 @@ class Checkout < ActiveRecord::Base
   
   # checkout state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'billing' do
-    after_transition :to => 'shipping', :do => :clone_billing_address    
+    after_transition :to => 'shipping', :do => :clone_billing_address
+    after_transition :to => 'complete', :do => :complete_order    
     event :next do
       transition :to => 'shipping', :from  => 'billing'
       transition :to => 'shipping_method', :from  => 'shipping'
@@ -65,6 +66,10 @@ class Checkout < ActiveRecord::Base
   def clone_billing_address
     shipment.address = bill_address.clone if shipment.address.firstname.nil?
     shipment.save
+  end      
+  
+  def complete_order
+    order.complete!
   end
   
   def authorize_creditcard
