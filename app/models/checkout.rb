@@ -31,6 +31,7 @@ class Checkout < ActiveRecord::Base
                                         :shipment_address_address1, :shipment_address_city, :shipment_address_statename, 
                                         :shipment_address_zipcode]  
                                         
+  validation_group :shipping_method, :fields => [:shipment_shipping_method_id]
   validation_group :payment, :fields=>[:creditcard_number, :creditcard_month, :creditcard_year, :creditcard_verification_value]
 
   def completed_at

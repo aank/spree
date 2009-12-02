@@ -29,14 +29,26 @@ class CheckoutsController < Spree::BaseController
   #   end
   # end    
   
+  # edit.before :step_before_hook
+  #                                  
+  # def step_before_hook
+  # end
+  
   update.before :enable_validation_groups
   update.after :next_step
   
   update do
     flash nil
     success.wants.html do
-      # TODO - determine the correct step to show, etc.
-      render 'edit'
+      # call before step hooks if defined for that step (ex. before_shipping_method, before_complete)
+      before_step_hook = "before_#{@step}".to_sym              
+      self.send before_step_hook if self.respond_to? before_step_hook
+
+      if @checkout.completed_at
+        redirect_to order_url(@order, {:checkout_complete => true}) and next
+      else
+        render 'edit'
+      end
     end
     # success.wants.html do
     #   if @order.reload.checkout_complete 
@@ -76,6 +88,12 @@ class CheckoutsController < Spree::BaseController
     #   render :json => "Unexpected failure in card authorization -- please contact site support"
     # end
   end
+    
+  protected
+  def before_shipping_method      
+    @available_methods = shipping_rate_hash
+    @checkout.shipment.shipping_method_id ||= @available_methods.first[:id]
+  end
 
   private
   def object
@@ -112,20 +130,24 @@ class CheckoutsController < Spree::BaseController
     object.save(false)
   end
   
-  def next_step
+  def next_step      
+    # call after step hooks if defined for that step (ex. after_shipping_method, after_complete)
+    after_step_hook = "after_#{@step}".to_sym              
+    self.send after_step_hook if self.respond_to? after_step_hook
+    
     @checkout.next!
     @step = @checkout.state
   end
   
-  # def rate_hash
-  #   fake_shipment = Shipment.new :order => @order, :address => @order.ship_address
-  #   @order.shipping_methods.collect do |ship_method|
-  #     fake_shipment.shipping_method = ship_method
-  #     { :id   => ship_method.id,
-  #       :name => ship_method.name,
-  #       :rate => number_to_currency(ship_method.calculate_cost(fake_shipment)) }
-  #   end
-  # end
+  def shipping_rate_hash
+    fake_shipment = Shipment.new :order => @order, :address => @order.ship_address
+    @order.shipping_methods.collect do |ship_method|
+      fake_shipment.shipping_method = ship_method
+      { :id   => ship_method.id,
+        :name => ship_method.name,
+        :rate => number_to_currency(ship_method.calculate_cost(fake_shipment)) }
+    end
+  end
   # 
   # def charge_hash
   #   Hash[*@order.charges.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]

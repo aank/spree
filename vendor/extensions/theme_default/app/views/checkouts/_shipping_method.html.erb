@@ -3,10 +3,11 @@
   <% checkout_form.fields_for :shipment do |shipment| %>     
     <div class="inner">
       <div id="methods">
-        <% @order.shipping_methods.each do |shipping_method| %>
+        <% @available_methods.each do |shipping_method| %>
           <p>
-            <%= shipment.radio_button("shipping_method_id", shipping_method.id) %>
-            <%= shipping_method.name %>
+            <%= shipment.radio_button("shipping_method_id", shipping_method[:id]) %>
+            <%= shipping_method[:name] %>
+            <%= shipping_method[:rate] %>
           </p>
         <% end %>
       </div>
