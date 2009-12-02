@@ -69,8 +69,6 @@ end
           @current_validation_group = group
           # jeffp: capture current fields for performance optimization
           @current_validation_fields = group_classes[found][group]
-        else
-          raise ArgumentError, "No validation group of name :#{group}"
         end
       end
  

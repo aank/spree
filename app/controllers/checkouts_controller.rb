@@ -34,7 +34,7 @@ class CheckoutsController < Spree::BaseController
   # def step_before_hook
   # end
   
-  update.before :enable_validation_groups
+  update.before { @checkout.enable_validation_group params[:step].to_sym } 
   update.after :next_step
   
   update do
@@ -156,13 +156,7 @@ class CheckoutsController < Spree::BaseController
   # def credit_hash
   #   Hash[*@order.credits.select {|c| c.amount !=0 }.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]
   # end
-    
-  def enable_validation_groups 
-    begin
-      @checkout.enable_validation_group params[:step].to_sym
-    rescue Exception => e
-    end
-  end
+
   
   # def check_bill_address
   #   # check whether the bill address has changed, and start a fresh record if
