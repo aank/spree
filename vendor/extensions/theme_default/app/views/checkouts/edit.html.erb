@@ -7,8 +7,8 @@
   <h1><%= t("checkout")%></h1>
   <%= error_messages_for :checkout %>
   <% form_for @checkout, :url => object_url, :html => { :method => :put, :id => 'checkout_form'} do |checkout_form| %>
-    <%= render @step, :checkout_form => checkout_form %>    
-    <input type="hidden" name="step" value="<%= @step %>">
+    <%= render @checkout.state, :checkout_form => checkout_form %>    
+    <input type="hidden" name="step" value="<%= @checkout.state %>">
     <input id="post-final" type="submit" style="display:none"/>
   <% end %>
 </div>

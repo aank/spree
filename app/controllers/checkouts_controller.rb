@@ -9,10 +9,13 @@ class CheckoutsController < Spree::BaseController
   belongs_to :order
 
   ssl_required :update, :edit
-  
+    
   # GET /checkout is invalid but we'll assume a bookmark or user error and just redirect to edit (assuming checkout is still in progress)           
   show.wants.html { redirect_to edit_object_url }
-
+  
+  edit.before :edit_hooks  
+  delivery.edit_hook :load_available_methods
+  
   # alias original r_c method so we can handle any (gateway) exceptions that might be thrown
   # alias :rc_update :update
   # def update
@@ -29,28 +32,21 @@ class CheckoutsController < Spree::BaseController
   #     redirect_to edit_object_url and return
   #   end
   # end    
-  
-  # edit.before :step_before_hook
-  #                                  
-  # def step_before_hook
-  # end
-  
-  update.before { @checkout.enable_validation_group params[:step].to_sym } 
-  update.after :next_step
+    
+  update.before :update_before
+  update.after :update_after
   
   update do
     flash nil
     success.wants.html do
-      # call before step hooks if defined for that step (ex. before_shipping_method, before_complete)
-      before_step_hook = "before_#{@step}".to_sym              
-      self.send before_step_hook if self.respond_to? before_step_hook
-
-      if @checkout.completed_at
+      if @checkout.completed_at 
+        complete_order
         redirect_to order_url(@order, {:checkout_complete => true}) and next
       else
         render 'edit'
       end
     end
+    
     # success.wants.html do
     #   if @order.reload.checkout_complete 
     #     if current_user
@@ -90,13 +86,27 @@ class CheckoutsController < Spree::BaseController
     # end
   end
     
-  protected
-  def before_shipping_method      
-    @available_methods = shipping_rate_hash
-    @checkout.shipment.shipping_method_id ||= @available_methods.first[:id]
+  private
+  def update_before
+    # call the edit hooks for the current step in case we experience validation failure and need to edit again      
+    edit_hooks
+    @checkout.enable_validation_group(@checkout.state.to_sym)
+  end
+  
+  def update_after
+    update_hooks
+    next_step
   end
 
-  private
+  # Calls edit hooks registered for the current step  
+  def edit_hooks  
+    edit_hook @checkout.state.to_sym 
+  end
+  # Calls update hooks registered for the current step  
+  def update_hooks
+    update_hook @checkout.state.to_sym 
+  end
+    
   def object
     return @object if @object
     @object = parent_object.checkout
@@ -121,94 +131,39 @@ class CheckoutsController < Spree::BaseController
     else
       default_country = Country.find Spree::Config[:default_country_id]
     end
-    @states = default_country.states.sort                           
+    @states = default_country.states.sort                                
+
     # prevent editing of a complete checkout  
     redirect_to order_url(parent_object) if parent_object.checkout_complete
   end
 
   def set_state
-    object.state = @step = params[:step] || Checkout.state_machines[:state].initial_state(nil).name
+    object.state = params[:step] || Checkout.state_machine.initial_state(nil).name
     object.save(false)
   end
   
   def next_step      
-    # call after step hooks if defined for that step (ex. after_shipping_method, after_complete)
-    after_step_hook = "after_#{@step}".to_sym              
-    self.send after_step_hook if self.respond_to? after_step_hook
-    
     @checkout.next!
-    @step = @checkout.state
+    # call edit hooks for this next step since we're going to just render it (instead of issuing a redirect)
+    edit_hooks
   end
   
-  def shipping_rate_hash
+  def load_available_methods        
+    @available_methods = rate_hash
+    @checkout.shipment.shipping_method_id ||= @available_methods.first[:id]
+  end
+
+  def complete_order
+    flash[:notice] = t('order_processed_successfully')
+  end
+  
+  def rate_hash
     fake_shipment = Shipment.new :order => @order, :address => @order.ship_address
     @order.shipping_methods.collect do |ship_method|
       fake_shipment.shipping_method = ship_method
-      { :id   => ship_method.id,
+      { :id => ship_method.id,
         :name => ship_method.name,
         :rate => number_to_currency(ship_method.calculate_cost(fake_shipment)) }
     end
   end
-  # 
-  # def charge_hash
-  #   Hash[*@order.charges.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]
-  # end
-  # 
-  # def credit_hash
-  #   Hash[*@order.credits.select {|c| c.amount !=0 }.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]
-  # end
-
-  
-  # def check_bill_address
-  #   # check whether the bill address has changed, and start a fresh record if
-  #   # we were using the address stored in the current user.
-  #   if checkout_info[:bill_address_attributes] and @checkout.bill_address
-  #     # always include the id of the record we must write to - ajax can't refresh the form
-  #     checkout_info[:bill_address_attributes][:id] = @checkout.bill_address.id
-  #     new_address = Address.new checkout_info[:bill_address_attributes]
-  #     if not @checkout.bill_address.same_as?(new_address) and
-  #          current_user and @checkout.bill_address == current_user.bill_address
-  #       # need to start a new record, so replace the existing one with a blank
-  #       checkout_info[:bill_address_attributes].delete :id
-  #       @checkout.bill_address = Address.new
-  #     end
-  #   end
-  # end
-  # 
-  # def check_ship_address
-  #   # check whether the ship address has changed, and start a fresh record if
-  #   # we were using the address stored in the current user.
-  #   if checkout_info[:shipment_attributes][:address_attributes] and @order.shipment.address
-  #     # always include the id of the record we must write to - ajax can't refresh the form
-  #     checkout_info[:shipment_attributes][:address_attributes][:id] = @order.shipment.address.id
-  #     new_address = Address.new checkout_info[:shipment_attributes][:address_attributes]
-  #     if not @order.shipment.address.same_as?(new_address) and
-  #          current_user and @order.shipment.address == current_user.ship_address
-  #       # need to start a new record, so replace the existing one with a blank
-  #       checkout_info[:shipment_attributes][:address_attributes].delete :id
-  #       @order.shipment.address = Address.new
-  #     end
-  #   end
-  # end
-  
-  # def update_before
-  # 
-  #   # update user to current one if user has logged in
-  #   @order.update_attribute(:user, current_user) if current_user
-  #   
-  #   if (checkout_info = params[:checkout]) and not checkout_info[:coupon_code]
-  #     # overwrite any earlier guest checkout email if user has since logged in
-  #     checkout_info[:email] = current_user.email if current_user
-  #   
-  #     # and set the ip_address to the most recent one
-  #     checkout_info[:ip_address] = request.env['REMOTE_ADDR']
-  #   
-  #     check_bill_address
-  #     
-  #     check_ship_address
-  #   
-  #   end
-  # end
-  
-  
 end

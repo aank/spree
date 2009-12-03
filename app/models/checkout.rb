@@ -30,6 +30,7 @@ class Checkout < ActiveRecord::Base
                                        :shipment_address_zipcode, :shipment_address_state, :shipment_address_lastname, 
                                        :shipment_address_address1, :shipment_address_city, :shipment_address_statename, 
                                        :shipment_address_zipcode]  
+  validation_group :delivery, :fields => []
 
   def completed_at
     order.completed_at
@@ -51,8 +52,8 @@ class Checkout < ActiveRecord::Base
   state_machine :initial => 'address' do
     after_transition :to => 'complete', :do => :complete_order    
     event :next do
-      transition :to => 'shipping_method', :from  => 'address'
-      transition :to => 'payment', :from => 'shipping_method'
+      transition :to => 'delivery', :from  => 'address'
+      transition :to => 'payment', :from => 'delivery'
       transition :to => 'complete', :from => 'payment'
     end
   end
