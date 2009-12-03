@@ -1,4 +1,5 @@
 class CheckoutsController < Spree::BaseController
+  include Spree::Checkout::Hooks
   include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
   before_filter :load_data
   before_filter :set_state
