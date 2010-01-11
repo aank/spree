@@ -29,6 +29,8 @@ For example, to view all shipments that are ready to ship and that were created 
 
 /api/shipments?search[state]=ready_to_ship&search[created_at_greater_than]=2010-01-01
 
+_HINT: Use +--globoff+ when passing SL params through Curl_
+
 For more details, see http://github.com/binarylogic/searchlogic
 
 ## Creating and updating resources
