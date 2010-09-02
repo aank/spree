@@ -18,7 +18,7 @@ PATH
       highline (>= 1.5.1)
       less (>= 1.2.20)
       paperclip (>= 2.3.1.1)
-      rails (>= 3.0.0.rc)
+      rails (~> 3.0.0)
       rd_awesome_nested_set (>= 1.4.4)
       rd_resource_controller
       rd_searchlogic
@@ -181,13 +181,29 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activemerchant (>= 1.7.1)
+  activerecord-tableless (>= 0.1.0)
+  acts_as_list (>= 0.1.2)
+  bundler (>= 0.9.26)
   capybara (~> 0.3.9)
   cucumber-rails (~> 0.3.2)
   database_cleaner (~> 0.5.2)
   fabrication
-  rails (= 3.0.0)
+  faker (>= 0.3.1)
+  highline (>= 1.5.1)
+  less (>= 1.2.20)
+  paperclip (>= 2.3.1.1)
+  rails (~> 3.0.0)
+  rd_awesome_nested_set (>= 1.4.4)
+  rd_resource_controller
+  rd_searchlogic
+  rd_stump (>= 0.0.2)
+  rd_unobtrusive_date_picker (>= 0.1.0)
   rspec-rails (= 2.0.0.beta.19)
   spree_auth!
   spree_core!
   sqlite3-ruby
+  state_machine (>= 0.9.4)
+  stringex (>= 1.0.3)
   thor
+  will_paginate (>= 3.0.pre)
