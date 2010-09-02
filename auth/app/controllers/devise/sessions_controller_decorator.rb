@@ -1,4 +1,5 @@
 Devise::SessionsController.class_eval do
+  layout "spree_application"
   after_filter :associate_user, :only => :create
 
   include Spree::CurrentOrder
