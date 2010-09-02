@@ -3,7 +3,6 @@
 ENV["RAILS_ENV"] ||= 'test'
 require 'test_app/config/environment'
 require 'rspec/rails'
-require 'fabrication'
 require 'fabricators'
 
 # Requires supporting files with custom matchers and macros, etc,
