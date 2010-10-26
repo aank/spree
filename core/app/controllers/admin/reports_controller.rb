@@ -31,8 +31,7 @@ class Admin::ReportsController < Admin::BaseController
     @orders = @search.find(:all)
 
     @item_total = @search.sum(:item_total)
-    @charge_total = @search.sum(:adjustment_total)
-    @credit_total = @search.sum(:credit_total)
+    @adjustment_total = @search.sum(:adjustment_total)
     @sales_total = @search.sum(:total)
   end
 
