@@ -1,5 +1,5 @@
 class Api::BaseController < Spree::BaseController
-
+  
   def self.resource_controller_for_api
     resource_controller
     skip_before_filter :verify_authenticity_token, :if => lambda { admin_token_passed_in_headers }
