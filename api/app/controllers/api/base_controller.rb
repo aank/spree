@@ -2,7 +2,7 @@ class Api::BaseController < Spree::BaseController
   
   def self.resource_controller_for_api
     resource_controller
-    skip_before_filter :verify_authenticity_token, :if => lambda { admin_token_passed_in_headers }
+    #skip_before_filter :verify_authenticity_token, :if => lambda { admin_token_passed_in_headers }
 
     index.response do |wants|
       wants.json { render :json => collection.to_json(collection_serialization_options) }
@@ -23,9 +23,9 @@ class Api::BaseController < Spree::BaseController
     end
 
     define_method :admin_token_passed_in_headers do
-      token = request.headers['X-SpreeAPIKey']
+      token = request.headers['HTTP_AUTHORIZATION']
       return access_denied unless token
-      return access_denied unless @current_user = User.find_by_api_key(token)
+      return access_denied unless User.find(1).valid_authentication_token?(token)
     end
 
     define_method :end_of_association_chain do

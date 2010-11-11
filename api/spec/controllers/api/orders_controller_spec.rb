@@ -1,44 +1,64 @@
 require 'spec_helper.rb'
 
 describe Api::OrdersController do
+  # using this to simutanitously test routes
   include Rack::Test::Methods
-
+  
+  before(:each) do
+    @user = mock_model(User).as_null_object
+    @order = Order.stub(:number => "R123123")
+  end
+  
   def app
     Rails.application 
   end
-
-  before(:each) do
-    @user = mock_model(User).as_null_object
-    @order = mock_model(Order).as_null_object
-  end
   
-  describe "GET index" do
+  context "when valid api token" do
     
-    it "should NOT GET list of orders" do
-       get uri_for("/orders"), nil, user_request("chadisrad")
-        
-        last_request.url.should eql( uri_for("/orders") )
-        last_response.should_not be_ok
+    describe "#show" do
+      it "should return JSON for the specified order" do
+        get uri_for("/orders/#{@order}"), nil, user_request(@user.authentication_token)
+        response.should be_success
+      end
     end
     
-    it 'should GET list of orders' do
-      get uri_for("/orders"), nil, user_request(@user.authentication_token)
+    describe "#index" do
       
-      last_request.url.should eql( uri_for("/orders") )
-      last_response.should be_ok
-    end
-    
-  end
-    
-  describe "GET show" do
-    
-    it "should GET a single order" do
-      get uri_for("/orders/#{@order.number}"), nil, user_request(@user.authentication_token)
+      context "when no search params" do
+        it "should return JSON for all of the orders" do
+          get  uri_for("/orders"), nil, user_request(@user.authentication_token)
+          response.should be_success
+        end
+      end
       
-      last_request.url.should eql( uri_for("/orders/#{@order.number}") )
-      last_response.should be_ok
+      context "when given search params" do
+        it "should return JSON for the requested orders" do
+          get uri_for("/orders?search=#{@order}"), {:search => @order}, user_request(@user.authentication_token)
+          response.should be_success
+        end
+      end
     end
     
   end
   
+  context "when invalid api token" do
+    
+    describe "#show" do
+      it "should return a 401 response" do
+        pending("Gotta override Warden to get 401 not 302 passed back")
+        get uri_for("/orders/#{@order}"), nil, user_request("bobisbob")
+        response.status.should == '401'
+      end
+    end
+    
+    describe "#index" do
+      it "should return a 401 response" do
+        pending("Gotta override Warden to get 401 not 302 passed back")
+        get uri_for("/orders"), nil, user_request("bobisbob")
+        response.status.should == '401'
+      end
+    end
+  end  
+    
 end
+

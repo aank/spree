@@ -8,85 +8,78 @@ describe Api::ShipmentsController do
   end
   
   before(:each) do
-    @user = mock_model(User, :authentication_token => '123xxx123xxx')
-    @order = mock_model(Order)
-    @shipment = mock_model(Shipment, :order_id => mock_model(Order)).as_null_object
-    #Shipment.stub_chain(:order_id, :id).and_return(@shipment)
+    @user = mock_model(User).as_null_object
+    assigns[:order] = mock_order
+    assigns[:shipment] = mock_shipment
+    mock_shipment.stub(:order).and_return([mock_order])
   end
-  #let(:user) { mock_model User, :authentication_token => '123xxx123xxx' }
-  #let(:shipment) { mock_model(Shipment).as_null_object }
-  # The below is failing, why? 
-  
-  
-  describe "GET index" do
 
-    context "list only shipments" do
+  
+  context "with valid api token" do
+
+    describe "#index" do
       it 'should GET list of Shipments' do
-        get "/api/shipments", nil, { 
-          'HTTP_AUTHORIZATION' => "#{@user.authentication_token}:xxxxxx",
-          "Content-Type" => "application/json",
-          "Accept" => "application/json"
-        }
-      
-        last_request.url.should eql("http://example.org/api/shipments")
-        last_response.should be_ok
+        get uri_for("/shipments"), nil, user_request(@user.authentication_token)
+        response.should be_success
       end
     end
     
-    context "list shipments of an Order" do
+    describe "#index" do
       it 'should GET list of Shipments' do
-        get "/api/orders/#{@shipment.order_id}/shipments", nil, { 
-          'HTTP_AUTHORIZATION' => "#{@user.authentication_token}:xxxxxx",
-          "Content-Type" => "application/json",
-          "Accept" => "application/json"
-        }
+        puts uri_for("/orders/#{@order.id}/shipments")
+        get uri_for("/orders/#{@order.id}/shipments"), nil, user_request(@user.authentication_token)
+        
+        last_request.url.should eql("http://example.org/api/orders/#{@order.id}/shipments")
+        response.should be_success
+      end
+    end
       
-        last_request.url.should eql("http://example.org/api/orders/#{@shipment.order_id}/shipments")
-        last_response.should be_ok
+    describe "#show" do
+      it "should GET a single Shipment" do
+        get uri_for("/orders/#{@mock_order.shipment.id}/shipments/#{@mock_shipment}"), nil, user_request(@user.authentication_token)
+        last_request.url.should eql("http://example.org/api/orders/#{@mock_order.shipment.id}/shipments/#{@mock_shipment}")
+        response.should be_success
       end
     end
     
-  end
-  
-  context "GET show" do
+    describe "#create" do
+      #let(:model) { mock_model Model }
+      it "should POST new data to Shipments" do
+        pending("Still waiting on fabricate for implementation")
+        post uri_for("/orders/#{order.shipment}/shipments/#{shipment}"), nil, user_request(@user.authentication_token)
+        
+        last_request.url.should eql("http://example.org/api/orders/#{order.shipment}/shipments/#{shipment}")
+        response.should be_success
+      end
+    end
     
-    it "should GET a single Shipment" do
-      get "/api/orders/#{@shipment.order_id}/shipments/#{@shipment.id}", nil, { 
-        'HTTP_AUTHORIZATION' => "#{@user.authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
-      last_request.url.should eql("http://example.org/api/orders/#{@shipment.order_id}/shipments/#{@shipment.id}")
-      last_response.should be_ok
+    describe "#update" do
+      #let(:model) { mock_model Model }
+      it "should PUT updated data into Shipments" do
+        pending("Still waiting on fabricate for implementation")
+        put uri_for("/orders/#{@shipment.order_id}/shipments/#{@shipment.id}"), nil, user_request(@user.authentication_token)
+        
+        last_request.url.should eql("http://example.org/api/orders/#{order.id}/shipments")
+        response.should be_success
+      end
     end
-  end
+    
+  end # close good context
+
+  protected
   
-  context "POST create" do
-    #let(:model) { mock_model Model }
-    it "should POST new data to Shipments" do
-      pending("Still waiting on fabricate for implementation")
-      post '/api/shipments/', nil, { 
-        'HTTP_AUTHORIZATION' => "#{user.authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
-      last_request.url.should eql("http://example.org/api/orders/#{order.number}/shipments")
-      last_response.should be_ok
-    end
+  def mock_shipment
+    @mock_shipment ||= mock_model(Shipment, {
+      :order_id => [mock_order]
+    })
   end
-  
-  context "PUT update" do
-    #let(:model) { mock_model Model }
-    it "should PUT updated data into Shipments" do
-      pending("Still waiting on fabricate for implementation")
-      put "/api/orders/#{order.id}/shipments", nil, { 
-        'HTTP_AUTHORIZATION' => "#{user.authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
-      last_request.url.should eql("http://example.org/api/orders/#{order.id}/shipments")
-      last_response.should be_ok
-    end
+
+  def mock_order
+    @mock_order ||= mock_model(Order)
+  end
+
+  def mock_new_order
+    @mock_new_order ||= mock_model(Order, :null_object => true).as_new_record
   end
   
 end
