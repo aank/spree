@@ -10,13 +10,9 @@ describe Api::OrdersController do
   before(:each) do
     @user = mock_model(User).as_null_object
     @order = mock_model(Order).as_null_object
-    #Order.stub!(:new, :user_id => @user.id).and_return(@order)
   end
   
   describe "GET index" do
-    #before(:each) do
-    #  
-    #end
     
     it "should NOT GET list of orders" do
        get uri_for("/orders"), nil, user_request("chadisrad")
@@ -44,6 +40,5 @@ describe Api::OrdersController do
     end
     
   end
-
   
 end
