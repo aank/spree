@@ -4,6 +4,9 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../test_app/config/environment", __FILE__)
 require 'rspec/rails'
 require 'fabrication'
+require 'fabricators'
+require 'devise/test_helpers'
+require 'controller_macros'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
@@ -25,4 +28,10 @@ RSpec.configure do |config|
   # examples within a transaction, comment the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
+  
+  # Devise stuff; we want the auth working via controllers - no mocking here
+  config.include(Devise::TestHelpers, :type => :controller)
+  
+  # My Stuff
+  config.include(ControllerMacros, :type => :controller)
 end
