@@ -7,19 +7,24 @@ describe Api::ProductsController do
     Rails.application
   end
   
-  let(:user) { mock_model User, :authentication_token => '123xxx123xxx' }
+  @user = mock_model(User).as_null_object
   let(:product) { mock_model(Product).as_null_object }
   
   describe "GET index" do
     it 'should GET list of Products' do
       pending("Not Implemented Product#retrieve_products")
-      get '/api/products', nil, { 
-        'HTTP_AUTHORIZATION' => "#{user.authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
-      last_request.url.should eql("http://example.org/api/products")
+      get uri_for("/products"), nil, user_request(@user.authentication_token)
+
+      last_request.url.should eql( uri_for("/products") )
       last_response.should be_ok
+    end
+    
+    it 'should NOT GET list of Products' do
+      pending("Not Implemented Product#retrieve_products")
+      get uri_for("/products"), nil, user_request("chadisrad")
+
+      last_request.url.should eql( uri_for("/products") )
+      last_response.should_not be_ok
     end
   end
   
@@ -29,13 +34,11 @@ describe Api::ProductsController do
     end
     it "should GET a single Product" do
       pending("Not Implemented Product#retrieve_products")
-      get "/api/products/#{product.id}'", nil, { 
-        'HTTP_AUTHORIZATION' => "#{user.authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
-      last_request.url.should eql("http://example.org/api/products/#{product.id}")
+      get uri_for("/products/#{product.id}"), nil, user_request(@user.authentication_token)
+
+      last_request.url.should eql( uri_for("/products/#{product.id}") )
       last_response.should be_ok
+
     end
   end
   
@@ -43,12 +46,8 @@ describe Api::ProductsController do
     
     it "should POST new data to Products" do
       pending("Not Implemented Product#retrieve_products")
-      post '/api/products/', nil, { 
-        'HTTP_AUTHORIZATION' => "#{user.authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
-      last_request.url.should eql("http://example.org/api/products")
+      post uri_for("/products"), {params} , user_request(@user.authentication_token)
+      last_request.url.should eql(uri_for("/products"))
       last_response.should be_ok
     end
   end
@@ -57,12 +56,9 @@ describe Api::ProductsController do
     
     it "should PUT updated data into Products" do
       pending("Not Implemented Product#retrieve_products")
-      put '/api/products/:id', nil, { 
-        'HTTP_AUTHORIZATION' => "#{user.authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
-      last_request.url.should eql("http://example.org/api/products")
+      put uri_for("/products/#{product.id}"), {params}, user_request(@user.authentication_token)
+      
+      last_request.url.should eql(uri_for("/products/#{product.id}"))
       last_response.should be_ok
     end
   end
