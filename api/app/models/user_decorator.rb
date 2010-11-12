@@ -9,6 +9,7 @@ User.class_eval do
   end
   
   def self.authenticate_with_http(username, password) 
+    logger.debug(username)
     self.authenticate_with_token(:auth_token => username) 
   end
     

@@ -5,13 +5,7 @@ Spree::BaseController.class_eval do
 
   # graceful error handling for cancan authorization exceptions
   rescue_from CanCan::AccessDenied do |exception|
-    if current_user
-      flash.now[:error] = I18n.t(:authorization_failure)
-      render 'shared/unauthorized', :layout => 'spree_application'
-    else
-      store_location
-      redirect_to login_path and return
-    end
+    return unauthorized
   end
 
   private
@@ -41,6 +35,9 @@ Spree::BaseController.class_eval do
       end
       format.xml do
         request_http_basic_authentication 'Web Password'
+      end
+      format.json do
+        render :text => "Not Authorized", :status => 422
       end
     end
   end

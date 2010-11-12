@@ -2,7 +2,7 @@ class Api::BaseController < Spree::BaseController
   
   def self.resource_controller_for_api
     resource_controller
-    #skip_before_filter :verify_authenticity_token, :if => lambda { admin_token_passed_in_headers }
+    skip_before_filter :verify_authenticity_token, :if => lambda { admin_token_passed_in_headers }
 
     index.response do |wants|
       wants.json { render :json => collection.to_json(collection_serialization_options) }

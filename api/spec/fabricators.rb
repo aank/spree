@@ -3,9 +3,9 @@ require 'fabrication'
 Fabricator(:user) do
   email { Fabricate.sequence(:user_email) { |n| "user#{n}@example.org" } }
   login { |u| u.email }
-  #authenticity_token { Fabricate.sequence(:user_authenticity_token) { |n| "#{n}#{n}#{n}xxx#{n}#{n}#{n}xxx"}}
-  #password "secret"
-  #password_confirmation { |u| u.password }
+  authenticity_token { Fabricate.sequence(:user_authenticity_token) { |n| "#{n}#{n}#{n}xxx#{n}#{n}#{n}xxx"}}
+  password "secret"
+  password_confirmation { |u| u.password }
 end
 
 Fabricator(:product) do

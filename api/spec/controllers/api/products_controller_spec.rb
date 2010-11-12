@@ -42,7 +42,7 @@ describe Api::ProductsController do
 
       it "should POST new data to Products" do
         pending("Not Implemented Product#retrieve_products")
-        post uri_for("/products"), {params} , user_request(@user.authentication_token)
+        post uri_for("/products"), nil , user_request(@user.authentication_token)
         last_request.url.should eql(uri_for("/products"))
         last_response.should be_ok
       end
@@ -52,7 +52,7 @@ describe Api::ProductsController do
 
       it "should PUT updated data into Products" do
         pending("Not Implemented Product#retrieve_products")
-        put uri_for("/products/#{product.id}"), {params}, user_request(@user.authentication_token)
+        put uri_for("/products/#{product.id}"), nil, user_request(@user.authentication_token)
 
         last_request.url.should eql(uri_for("/products/#{product.id}"))
         last_response.should be_ok
@@ -91,7 +91,7 @@ describe Api::ProductsController do
 
       it "should POST new data to Products" do
         pending("Not Implemented Product#retrieve_products")
-        post uri_for("/products"), {params} , user_request(@user.authentication_token)
+        post uri_for("/products"), nil , user_request(@user.authentication_token)
         last_request.url.should eql(uri_for("/products"))
         last_response.should be_ok
       end
@@ -101,7 +101,7 @@ describe Api::ProductsController do
 
       it "should PUT updated data into Products" do
         pending("Not Implemented Product#retrieve_products")
-        put uri_for("/products/#{product.id}"), {params}, user_request(@user.authentication_token)
+        put uri_for("/products/#{product.id}"), nil, user_request(@user.authentication_token)
 
         last_request.url.should eql(uri_for("/products/#{product.id}"))
         last_response.should be_ok
