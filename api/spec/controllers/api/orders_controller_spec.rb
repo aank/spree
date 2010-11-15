@@ -14,7 +14,8 @@ describe Api::OrdersController do
   end
   
   context "when valid api token" do
-    
+    let(:mock_unit) { mock("unit") }
+    before { controller.stub :collection => [mock_unit] }
     describe "#show" do
       it "should return JSON for the specified order" do
         get uri_for("/orders/#{@order}"), nil, user_request(@user.authentication_token)

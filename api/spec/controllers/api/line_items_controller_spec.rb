@@ -17,11 +17,7 @@ describe Api::LineItemsController do
   
   describe "GET index" do
     it 'should GET list of Line Items' do
-      get '/api/line_items', nil, { 
-        'HTTP_AUTHORIZATION' => "#{authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
+      get uri_for("/api/line_items"), nil, user_request(@user.authentication_token)
       assert last_response.ok?
     end
   end
@@ -30,11 +26,7 @@ describe Api::LineItemsController do
     #let(:model) { mock_model Model }
     it "should GET a single Line Item" do
       pending("Still waiting on fabricate for implementation")
-      get '/api/line_items/:id', nil, { 
-        'HTTP_AUTHORIZATION' => "#{authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
+      get '/api/line_items/:id', nil, user_request(@user.authentication_token)
       assert last_response.ok?
     end
   end
