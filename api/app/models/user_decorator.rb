@@ -8,10 +8,10 @@ User.class_eval do
     self.update_attribute(:authentication_token, secure_digest(Time.now, (1..10).map{ rand.to_s }))
   end
   
-  def self.authenticate_with_http(username, password) 
-    logger.debug(username)
-    self.authenticate_with_token(:auth_token => username) 
-  end
+  #def self.authenticate_with_http(username, password) 
+  #  logger.debug(username)
+  #  self.authenticate_with_token(:auth_token => username) 
+  #end
     
   private
 

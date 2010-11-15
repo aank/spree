@@ -7,67 +7,67 @@ describe Api::ShipmentsController do
     Rails.application
   end
   
+  let(:order) { mock_model(Order, :number => "R123123", :reload => nil, :save! => true) }
+  
   before(:each) do
     @user = mock_model(User).as_null_object
     @shipment = mock_model(Shipment).as_null_object
     
-    @order = mock_model(Order)
-    @shipments = mock("shipments")
-    @order.stub_chain(:shipments).and_return(@shipments)
+    #@order = mock_model(Order, :save => true)
+    #Order.stub(:find).and_return(@order)
+    Order.stub(:find).with(1).and_return(order) 
+    @shipments = mock("shipment_proxy")
+    @shipments.stub(:build).and_return(mock_model(Shipment, :save => true))
+    
+    order.stub(:shipments).and_return(@shipments)
     
   end
-
   
-  context "with valid api token" do
-
-    describe "#index" do
-      it 'should GET list of Shipments' do
-        get uri_for("/shipments"), nil, user_request(@user.authentication_token)
-        response.should be_success
-      end
-
-      it 'should GET list of Shipments for an order' do
-        puts uri_for("/orders/#{@order}/shipments")
-        get uri_for("/orders/#{@order}/shipments"), nil, user_request(@user.authentication_token)
-        
-        last_request.url.should eql("http://example.org/api/orders/#{@order}/shipments")
-        response.should be_success
-      end
+  describe "#index" do
+    it 'should GET list of Shipments' do
+      get uri_for("/shipments"), nil, user_request(@user.authentication_token)
+      response.should be_success
     end
+
+    it 'should GET list of Shipments for an order' do
+      puts uri_for("/orders/#{order}/shipments")
+      get uri_for("/orders/#{order}/shipments"), nil, user_request(@user.authentication_token)
       
-    describe "#show" do
-      it "should GET a single Shipment" do
-        get uri_for("/shipments/#{@shipment}"), nil, user_request(@user.authentication_token)
-        last_request.url.should eql("http://example.org/api/shipments/#{@shipment}")
-        response.should be_success
-      end
+      last_request.url.should eql("http://example.org/api/orders/#{order}/shipments")
+      response.should be_success
     end
+  end
     
-    describe "#create" do
-      before do
-        Shipment.stub(:new).and_return(@shipment)
-      end
-      it "should POST new data to Shipments" do
-        Shipment.should_receive(:new).with("order_id" => "R123123").and_return(@shipment)
-        post uri_for("/shipments/#{@shipment}"), {:shipment => {:order_id => "R123123"}}, user_request(@user.authentication_token)
-        
-        last_request.url.should eql("http://example.org/api/shipments/#{@shipment}")
-        response.should be_success
-      end
+  describe "#show" do
+    it "should GET a single Shipment" do
+      get uri_for("/shipments/#{@shipment}"), nil, user_request(@user.authentication_token)
+      last_request.url.should eql("http://example.org/api/shipments/#{@shipment}")
+      response.should be_success
     end
-    
-    describe "#update" do
-      #let(:model) { mock_model Model }
-      it "should PUT updated data into Shipments" do
-        pending("Still waiting on fabricate for implementation")
-        put uri_for("/orders/#{@shipment.order_id}/shipments/#{@shipment.id}"), nil, user_request(@user.authentication_token)
-        
-        last_request.url.should eql("http://example.org/api/orders/#{order.id}/shipments")
-        response.should be_success
-      end
+  end
+  
+  describe "#create" do
+    before do
+      Shipment.stub(:new).and_return(@shipment)
     end
-    
-  end # close good context
+    it "should POST new data to Shipments for an Order" do
+      Shipment.should_receive(:new).with(:order => order)
+      post uri_for("/orders/#{order}/shipments"), {:shipment => {:order => order}}, user_request(@user.authentication_token)
+      
+      last_request.url.should eql("http://example.org/api/shipments/#{@shipment}")
+      response.should be_success
+    end
+  end
+  #
+  #describe "#update" do
+  #  #let(:model) { mock_model Model }
+  #  it "should PUT updated data into Shipments" do
+  #    put uri_for("/orders/#{@order}/shipments/#{@shipment}"), nil, user_request(@user.authentication_token)
+  #    
+  #    last_request.url.should eql("http://example.org/api/orders/#{order.id}/shipments")
+  #    response.should be_success
+  #  end
+  #end
 
 end
   

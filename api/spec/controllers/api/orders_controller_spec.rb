@@ -40,25 +40,6 @@ describe Api::OrdersController do
     end
     
   end
-  
-  context "when invalid api token" do
-    
-    describe "#show" do
-      it "should return a 401 response" do
-        pending("Gotta override Warden to get 401 not 302 passed back")
-        get uri_for("/orders/#{@order}"), nil, user_request("bobisbob")
-        response.status.should == '401'
-      end
-    end
-    
-    describe "#index" do
-      it "should return a 401 response" do
-        pending("Gotta override Warden to get 401 not 302 passed back")
-        get uri_for("/orders"), nil, user_request("bobisbob")
-        response.status.should == '401'
-      end
-    end
-  end  
     
 end
 
