@@ -7,6 +7,8 @@ describe Api::ShipmentsController do
     Rails.application
   end
   
+  
+  
   let(:order) { mock_model(Order, :number => "R123123", :reload => nil, :save! => true) }
   
   before(:each) do

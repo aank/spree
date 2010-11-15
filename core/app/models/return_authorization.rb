@@ -2,19 +2,20 @@ class ReturnAuthorization < ActiveRecord::Base
   belongs_to :order
   has_many :inventory_units
   before_create :generate_number
+  before_save :force_positive_amount
 
   validates :order, :presence => true
   validates :amount, :numericality => true
   validate :must_have_shipped_units
 
   state_machine :initial => 'authorized' do
-    after_transition :to => 'received', :do => :add_credit
+    after_transition :to => 'received', :do => :process_return
 
     event :receive do
       transition :to => 'received', :from => 'authorized', :if => :allow_receive?
     end
     event :cancel do
-      transition :to => 'cancelled', :from => 'authorized'
+      transition :to => 'canceled', :from => 'authorized'
     end
   end
 
@@ -47,7 +48,7 @@ class ReturnAuthorization < ActiveRecord::Base
 
   private
   def must_have_shipped_units
-    errors.add(:order, I18n.t("has_no_shipped_units")) if order.nil? || order.shipped_units.nil?
+    errors.add(:order, I18n.t("has_no_shipped_units")) if order.nil? || !order.inventory_units.any?(&:shipped?)
   end
 
   def generate_number
@@ -61,14 +62,18 @@ class ReturnAuthorization < ActiveRecord::Base
     self.number = random
   end
 
-  def add_credit
+  def process_return
     inventory_units.each &:return!
 
-    credit = Adjustment.create(:source => self, :order_id => self.order.id, :amount => (self.amount > 0 ? self.amount * -1 : self.amount), :label => I18n.t("rma_credit"))
+    credit = Adjustment.create(:source => self, :order_id => self.order.id, :amount => self.amount.abs * -1, :label => I18n.t("rma_credit"))
     self.order.update!
   end
 
   def allow_receive?
     !inventory_units.empty?
+  end
+
+  def force_positive_amount
+    self.amount = self.amount.abs
   end
 end
