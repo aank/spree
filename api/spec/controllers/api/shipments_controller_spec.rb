@@ -10,66 +10,75 @@ describe Api::ShipmentsController do
   
   
   let(:order) { mock_model(Order, :number => "R123123", :reload => nil, :save! => true) }
-  
-  before(:each) do
-    @user = mock_model(User).as_null_object
-    @shipment = mock_model(Shipment).as_null_object
-    
-    #@order = mock_model(Order, :save => true)
-    #Order.stub(:find).and_return(@order)
-    Order.stub(:find).with(1).and_return(order) 
-    @shipments = mock("shipment_proxy")
-    @shipments.stub(:build).and_return(mock_model(Shipment, :save => true))
-    
-    order.stub(:shipments).and_return(@shipments)
-    
-  end
-  
-  describe "#index" do
-    it 'should GET list of Shipments' do
-      get uri_for("/shipments"), nil, user_request(@user.authentication_token)
-      response.should be_success
-    end
+  let(:shipment) { mock_model(Shipment).as_null_object }
 
-    it 'should GET list of Shipments for an order' do
-      puts uri_for("/orders/#{order}/shipments")
-      get uri_for("/orders/#{order}/shipments"), nil, user_request(@user.authentication_token)
-      
-      last_request.url.should eql("http://example.org/api/orders/#{order}/shipments")
-      response.should be_success
-    end
-  end
+  context "with good auth token" do
     
-  describe "#show" do
-    it "should GET a single Shipment" do
-      get uri_for("/shipments/#{@shipment}"), nil, user_request(@user.authentication_token)
-      last_request.url.should eql("http://example.org/api/shipments/#{@shipment}")
-      response.should be_success
+    before(:each) do
+      @user = mock_model(User).as_null_object  
+    end
+  
+    describe "#index" do
+      let(:collection) { mock("collection") }
+      before { controller.stub :collection => collection }
+    
+      it 'should GET list of Shipments' do
+        get uri_for("/shipments"), nil, user_request(@user.authentication_token)
+        response.should be_success
+      end
+
+    end
+    
+    describe "#show" do
+      before {Shipment.stub(:new).and_return(shipment)}
+      it "should GET a single Shipment" do
+        get uri_for("/shipments/#{shipment.id}.json"), nil, user_request(@user.authentication_token)
+        response.should be_success
+      end
+    end
+  
+    describe "#create" do
+    
+      it "should POST new data to Shipments for an Order" do
+        Shipment.should_receive(:new)
+        post uri_for("/shipments.json"), {:shipment => {:order => order}}, user_request(@user.authentication_token)
+        response.should be_success
+      end
+    end
+    
+    describe "#update" do
+      before {Shipment.stub(:new).and_return(shipment)}
+      it "should PUT updated data into Shipments" do
+        pending("I coming")
+        Shipment.should_receive(:update)
+        put uri_for("/shipments/#{shipment.id}.json"), {:shipment => {:order => order}}, user_request(@user.authentication_token)
+        
+        response.should be_success
+      end
     end
   end
   
-  describe "#create" do
-    before do
-      Shipment.stub(:new).and_return(@shipment)
-    end
-    it "should POST new data to Shipments for an Order" do
-      Shipment.should_receive(:new).with(:order => order)
-      post uri_for("/orders/#{order}/shipments"), {:shipment => {:order => order}}, user_request(@user.authentication_token)
-      
-      last_request.url.should eql("http://example.org/api/shipments/#{@shipment}")
-      response.should be_success
+  context "with no auth token" do
+    describe "#index" do
+    
+      it 'should GET list of Shipments' do
+        get uri_for("/shipments.json"), nil, user_request(nil)
+        last_response.status.should == 422
+      end
+
     end
   end
-  #
-  #describe "#update" do
-  #  #let(:model) { mock_model Model }
-  #  it "should PUT updated data into Shipments" do
-  #    put uri_for("/orders/#{@order}/shipments/#{@shipment}"), nil, user_request(@user.authentication_token)
-  #    
-  #    last_request.url.should eql("http://example.org/api/orders/#{order.id}/shipments")
-  #    response.should be_success
-  #  end
-  #end
+  
+  context "with bad auth token" do
+    describe "#index" do
+    
+      it 'should GET list of Shipments' do
+        get uri_for("/shipments.json"), nil, user_request("poopoo")
+        last_response.status.should == 422
+      end
+
+    end
+  end
 
 end
   

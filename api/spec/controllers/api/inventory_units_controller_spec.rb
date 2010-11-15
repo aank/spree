@@ -36,7 +36,7 @@ describe Api::InventoryUnitsController do
     end
 
     describe "POST create" do
-      #let(:model) { mock_model Model }
+      
       it "should POST new data to Inventory Units" do
         post uri_for("/api/inventory_units.json"), {:text => {:foo => "text"}}, user_request(@user.authentication_token)
         response.should be_success
