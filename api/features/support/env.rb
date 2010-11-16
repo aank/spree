@@ -6,7 +6,6 @@
 
 ENV["RAILS_ENV"] ||= "test"
 require File.expand_path(File.dirname(__FILE__) + '/../../spec/test_app/config/environment')
-#require File.expand_path(File.dirname(__FILE__) + "/../../spec/fabricators")
 
 require 'cucumber/formatter/unicode' # Remove this line if you don't want Cucumber Unicode support
 require 'cucumber/rails/world'
