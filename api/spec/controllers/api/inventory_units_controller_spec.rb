@@ -44,12 +44,10 @@ describe Api::InventoryUnitsController do
     end
 
     describe "PUT update" do
-      before do
-        InventoryUnit.stub(:find).and_return(inventory_unit)
-      end
+      before {InventoryUnit.stub(:new).and_return(inventory_unit)}
+
       it "should PUT updated data into Inventory Units" do
-        pending("The find and update pain - I'll get it on the rebound")
-        put uri_for("/inventory_units/#{inventory_unit.id}.json"), {:text => {:foo => "text"}}, user_request(@user.authentication_token)
+        put uri_for("/inventory_units.json"), {:text => {:id => inventory_unit.id, :foo => "text"}}, user_request(@user.authentication_token)
         response.should be_success
       end
     end
@@ -86,7 +84,7 @@ describe Api::InventoryUnitsController do
         InventoryUnit.stub(:find).and_return(inventory_unit)
       end
       it "should PUT updated data into Inventory Units" do
-        put uri_for("/inventory_units/#{inventory_unit.id}.json"), {:text => {:foo => "text"}}, user_request(nil)
+        put uri_for("/inventory_units.json"), {:text => {:id => inventory_unit.id, :foo => "text"}}, user_request(nil)
         last_response.status.should == 422
       end
     end
@@ -122,7 +120,7 @@ describe Api::InventoryUnitsController do
         InventoryUnit.stub(:find).and_return(inventory_unit)
       end
       it "should PUT updated data into Inventory Units" do
-        put uri_for("/inventory_units/#{inventory_unit.id}.json"), {:text => {:foo => "text"}}, user_request("poopoo")
+        put uri_for("/inventory_units.json"), {:text => {:id => inventory_unit.id, :foo => "text"}}, user_request("poopoo")
         last_response.status.should == 422
       end
     end
