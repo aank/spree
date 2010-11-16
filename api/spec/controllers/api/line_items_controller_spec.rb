@@ -23,7 +23,7 @@ describe Api::LineItemsController do
       before { controller.stub :collection => collection }
     
       it 'should GET list of Line Items' do
-        get uri_for("/line_items"), nil, user_request(@user.authentication_token)
+        get uri_for("/line_items.json"), nil, user_request(@user.authentication_token)
         response.should be_success
       end
     end
@@ -31,7 +31,7 @@ describe Api::LineItemsController do
     describe "GET show" do
       before {LineItem.stub(:new).and_return(line_item)}
       it "should GET a single Line Item" do
-        get uri_for("/line_items/#{line_item.id}"), nil, user_request(@user.authentication_token)
+        get uri_for("/line_items/#{line_item.id}.json"), nil, user_request(@user.authentication_token)
         response.should be_success
       end
     end
@@ -39,16 +39,16 @@ describe Api::LineItemsController do
     describe "POST create" do
     
       it "should POST new data to Line Items" do
-        post uri_for("/line_items"), {:line_item => {:order => order}}, user_request(@user.authentication_token)
+        post uri_for("/line_item.json"), {:line_item => {:order => order}}, user_request(@user.authentication_token)
         response.should be_success
       end
     end
   
     describe "PUT update" do
-      #let(:model) { mock_model Model }
+      
       it "should PUT updated data into Line Items" do
         pending("getting there")
-        put uri_for("/line_items/#{line_item.id}"), nil, user_request(@user.authentication_token)
+        put uri_for("/line_items.json"), {:line_item => {:id => line_item.id, :order => order}}, user_request(@user.authentication_token)
         response.should be_success
       end
     end
@@ -61,15 +61,15 @@ describe Api::LineItemsController do
       before { controller.stub :collection => collection }
     
       it 'should GET list of Line Items' do
-        get uri_for("/line_items"), nil, user_request(nil)
+        get uri_for("/line_items.json"), nil, user_request(nil)
         last_response.status.should == 422
       end
     end
   
     describe "GET show" do
-      #before {LineItem.stub(:new).and_return(line_item)}
+      before {LineItem.stub(:new).and_return(line_item)}
       it "should GET a single Line Item" do
-        get uri_for("/line_items/#{line_item.id}"), nil, user_request(nil)
+        get uri_for("/line_items/#{line_item.id}.json"), nil, user_request(nil)
         last_response.status.should == 422
       end
     end
@@ -77,7 +77,7 @@ describe Api::LineItemsController do
     describe "POST create" do
     
       it "should POST new data to Line Items" do
-        post uri_for("/line_items"), {:line_item => {:order => order}}, user_request(nil)
+        post uri_for("/line_items.json"), {:line_item => {:order => order}}, user_request(nil)
         last_response.status.should == 422
       end
     end
@@ -86,7 +86,7 @@ describe Api::LineItemsController do
       
       it "should PUT updated data into Line Items" do
         pending("getting there")
-        put uri_for("/line_items/#{line_item.id}"), nil, user_request(nil)
+        put uri_for("/line_items.json"), {:line_item => {:id => line_item.id, :order => order}}, user_request(nil)
         last_response.status.should == 422
       end
     end 
@@ -98,7 +98,7 @@ describe Api::LineItemsController do
       before { controller.stub :collection => collection }
     
       it 'should GET list of Line Items' do
-        get uri_for("/line_items"), nil, user_request("poopoo")
+        get uri_for("/line_items.json"), nil, user_request("poopoo")
         last_response.status.should == 422
       end
     end
@@ -107,7 +107,7 @@ describe Api::LineItemsController do
       before {LineItem.stub(:new).and_return(line_item)}
       
       it "should GET a single Line Item" do
-        get uri_for("/line_items/#{line_item.id}"), nil, user_request("poopoo")
+        get uri_for("/line_items/#{line_item.id}.json"), nil, user_request("poopoo")
         last_response.status.should == 422
       end
     end
@@ -115,7 +115,7 @@ describe Api::LineItemsController do
     describe "POST create" do
     
       it "should POST new data to Line Items" do
-        post uri_for("/line_items"), {:line_item => {:order => order}}, user_request("poopoo")
+        post uri_for("/line_items.json"), {:line_item => {:order => order}}, user_request("poopoo")
         last_response.status.should == 422
       end
     end
@@ -124,7 +124,7 @@ describe Api::LineItemsController do
       
       it "should PUT updated data into Line Items" do
         pending("getting there")
-        put uri_for("/line_items/#{line_item.id}"), nil, user_request("poopoo")
+        put uri_for("/line_items.json"), {:line_item => {:id => line_item.id, :order => order}}, user_request("poopoo")
         last_response.status.should == 422
       end
     end
