@@ -37,7 +37,6 @@ describe Api::LineItemsController do
   describe "POST create" do
     
     it "should POST new data to Line Items" do
-      LineItem.should_receive(:new)
       post uri_for("/line_items"), {:line_item => {:order => order}}, user_request(@user.authentication_token)
       response.should be_success
     end

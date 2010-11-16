@@ -22,11 +22,11 @@ end
 
 Given /^I am a valid API user$/ do
   @user = Fabricate(:user)
-  #basic_authorize @user.authentication_token, "X"
+  authorize @user.authentication_token, "X"
 end
 
 Given /^I send and accept json$/ do
-  header 'AUTHORIZATION', "#{@user.authentication_token}:X"
+  #header 'AUTHORIZATION', "#{@user.authentication_token}:X"
   header "Content-Type","application/json"
   header "Accept","application/json"
 end
