@@ -49,9 +49,8 @@ describe Api::ShipmentsController do
     describe "#update" do
       before {Shipment.stub(:new).and_return(shipment)}
       it "should PUT updated data into Shipments" do
-        pending("I coming")
-        Shipment.should_receive(:update)
-        put uri_for("/shipments/#{shipment.id}.json"), {:shipment => {:order => order}}, user_request(@user.authentication_token)
+        
+        put uri_for("/shipments.json"), {:shipment => {:id => shipment.id, :order => order}}, user_request(@user.authentication_token)
         
         response.should be_success
       end
