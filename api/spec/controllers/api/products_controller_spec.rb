@@ -13,14 +13,14 @@ describe Api::ProductsController do
   end
   
   context "when valid api token" do
+    let(:retrieve_products) { mock("retrieve_products") }
+    before { controller.stub :retrieve_products => [retrieve_products] }
     
     describe "#index" do
       it 'should GET list of Products' do
-        pending("Not Implemented Product#retrieve_products")
         get uri_for("/products"), nil, user_request(@user.authentication_token)
 
-        last_request.url.should eql( uri_for("/products") )
-        last_response.should be_ok
+        response.should be_success
       end
     end 
     describe "#show" do

@@ -13,47 +13,42 @@ describe Api::LineItemsController do
     Rails.application 
   end
   
-  let(:order) { mock_model(Order).as_null_object }
+  let(:order) { mock_model(Order, :number => "R123123", :reload => nil, :save! => true) }
+  let(:line_item) { mock_model(LineItem).as_null_object }
   
   describe "GET index" do
+    let(:collection) { mock("collection") }
+    before { controller.stub :collection => collection }
+    
     it 'should GET list of Line Items' do
-      get uri_for("/api/line_items"), nil, user_request(@user.authentication_token)
-      assert last_response.ok?
+      get uri_for("/line_items"), nil, user_request(@user.authentication_token)
+      response.should be_success
     end
   end
   
   describe "GET show" do
-    #let(:model) { mock_model Model }
+    before {LineItem.stub(:new).and_return(line_item)}
     it "should GET a single Line Item" do
-      pending("Still waiting on fabricate for implementation")
-      get '/api/line_items/:id', nil, user_request(@user.authentication_token)
-      assert last_response.ok?
+      get uri_for("/line_items/#{line_item.id}"), nil, user_request(@user.authentication_token)
+      response.should be_success
     end
   end
   
   describe "POST create" do
-    #let(:model) { mock_model Model }
+    
     it "should POST new data to Line Items" do
-      pending("Still waiting on fabricate for implementation")
-      post '/api/line_items/', nil, { 
-        'HTTP_AUTHORIZATION' => "#{authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
-      assert last_response.ok?
+      LineItem.should_receive(:new)
+      post uri_for("/line_items"), {:line_item => {:order => order}}, user_request(@user.authentication_token)
+      response.should be_success
     end
   end
   
   describe "PUT update" do
     #let(:model) { mock_model Model }
     it "should PUT updated data into Line Items" do
-      pending("Still waiting on fabricate for implementation")
-      put '/api/line_items/:id', nil, { 
-        'HTTP_AUTHORIZATION' => "#{authentication_token}:xxxxxx",
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
-      assert last_response.ok?
+      pending("getting there")
+      put uri_for("/line_items/#{line_item.id}"), nil, user_request(@user.authentication_token)
+      response.should be_success
     end
   end
   
