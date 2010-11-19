@@ -113,11 +113,7 @@ Devise.setup do |config|
   # devise role declared in your routes.
   # config.default_scope = :user
 
-<<<<<<< HEAD
   # Configure sign_out behavior.
-=======
-  # Configure sign_out behavior. 
->>>>>>> api
   # By default sign_out is scoped (i.e. /users/sign_out affects only :user scope).
   # In case of sign_out_all_scopes set to true any logout action will sign out all active scopes.
   # config.sign_out_all_scopes = false
@@ -143,8 +139,5 @@ Devise.setup do |config|
   #   end
   #   manager.default_strategies(:scope => :user).unshift :twitter_oauth
   # end
-<<<<<<< HEAD
 end
-=======
-end
->>>>>>> api
+

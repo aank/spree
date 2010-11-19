@@ -7,7 +7,7 @@ describe User do
   context "#generate_api_key!" do
     it "should set api_key to a 40 char SHA" do
       user.generate_api_key!
-      user.authentication_token.to_s.length.should == 40
+      user.authentication_token.to_s.length.should == 20
     end
   end
 
