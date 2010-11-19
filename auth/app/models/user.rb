@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :token_authenticatable, :registerable,
          :lockable, :recoverable, :rememberable, :trackable, :validatable, :encryptable
 
+
   has_many :orders
   has_and_belongs_to_many :roles
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
@@ -20,7 +21,7 @@ class User < ActiveRecord::Base
   def has_role?(role_in_question)
     roles.any? { |role| role.name == role_in_question.to_s }
   end
-
+  
   # Creates an anonymous user.  An anonymous user is basically an auto-generated +User+ account that is created for the customer
   # behind the scenes and its completely transparently to the customer.  All +Orders+ must have a +User+ so this is necessary
   # when adding to the "cart" (which is really an order) and before the customer has a chance to provide an email or to register.

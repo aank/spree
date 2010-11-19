@@ -11,7 +11,11 @@ gemspec
 
 group :test do
   gem 'rspec-rails', '~> 2.1.0'
+<<<<<<< HEAD
   gem 'factory_girl_rails'
+=======
+  #gem 'factory_girl_rails'
+>>>>>>> api
 end
 
 group :cucumber do

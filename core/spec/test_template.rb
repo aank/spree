@@ -2,4 +2,6 @@
 gem "spree_core", :path => ".."
 gem 'rspec', '2.0.0.beta.19', :group => 'test'
 gem 'rspec-rails', '2.0.0.beta.19', :group => 'test'
-gem 'factory_girl_rails', :group => 'test'
+# We need to resolve the Rails 3.0.3 routing and SQLite index length issues before activating this
+# This fails for new sandboxes and test_apps
+#gem 'factory_girl_rails', :group => 'test'
