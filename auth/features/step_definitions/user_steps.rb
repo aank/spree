@@ -5,6 +5,15 @@ Given /^I am signed up as "(.+)\/(.+)"$/ do |email, password|
     :password_confirmation => password).save!
 end
 
+Given /^I have an admin account of "(.+)\/(.+)"$/ do |email, password|
+  @user = User.create(
+    :email                 => email,
+    :password              => password,
+    :password_confirmation => password)
+  @user.roles << Role.find_by_name("admin")
+  @user.save
+end
+
 When /^I sign in as "(.*)\/(.*)"$/ do |email, password|
   When %{I go to the sign in page"}
   And %{I fill in "Email" with "#{email}"}

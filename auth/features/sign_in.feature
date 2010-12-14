@@ -23,3 +23,9 @@ Feature: Sign in
     And I sign in as "email@person.com/wrongpassword"
     Then I should see "Invalid email or password"
     And I should be signed out
+
+  Scenario: User requests a restricted page with the correct password
+    Given I have an admin account of "email@person.com/password"
+    When I go to the admin home page
+    And I sign in as "email@person.com/password"
+    Then I should be on the admin home page
