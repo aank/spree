@@ -3,8 +3,12 @@ class Admin::OrdersController < Admin::BaseController
   resource_controller
   before_filter :initialize_txn_partials
   before_filter :initialize_order_events
-  before_filter :load_object, :only => [:fire, :resend, :history, :user]
+  before_filter :load_object, :only => [:fire, :resend, :user]
   before_filter :ensure_line_items, :only => [:update]
+
+  def history
+    @order = Order.find_by_number!(params[:id])
+  end
 
   update do
     flash nil

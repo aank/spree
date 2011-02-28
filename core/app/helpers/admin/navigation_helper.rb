@@ -40,17 +40,25 @@ module Admin::NavigationHelper
   end
 
   def link_to_edit(resource, options={})
-    link_to_with_icon('edit', t("edit"), edit_object_url(resource), options)
+    if @edit_url
+      link_to_with_icon('edit', t("edit"), @edit_url, options)
+    else
+      link_to_with_icon('edit', t("edit"), edit_object_url(resource), options)
+    end
   end
 
-  def link_to_clone(resource)
-    link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource))
+  def link_to_clone(resource, options = {})
+    link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource), options)
   end
 
   def link_to_delete(resource, options = {}, html_options={})
     options.assert_valid_keys(:url, :caption, :title, :dataType, :success, :name)
 
-    options.reverse_merge! :url => object_url(resource) unless options.key? :url
+    if @delete_url
+      options.reverse_merge! :url => @delete_url
+    else
+      options.reverse_merge! :url => object_url(resource) unless options.key? :url
+    end
     options.reverse_merge! :caption => t('are_you_sure')
     options.reverse_merge! :title => t('confirm_delete')
     options.reverse_merge! :dataType => 'script'

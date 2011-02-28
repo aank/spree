@@ -1,10 +1,10 @@
 class TaxonsController < Spree::BaseController
 
+  before_filter :load_taxon, :only => [:show]
+
   helper :products
-  rescue_from ActiveRecord::RecordNotFound, :with => :render_404
 
   def show
-    raise ActiveRecord::RecordNotFound unless @taxon = Taxon.find_by_permalink(params[:id])
     params[:taxon] = @taxon.id
     @searcher = Spree::Config.searcher_class.new(params)
     @products = @searcher.retrieve_products
@@ -14,6 +14,10 @@ class TaxonsController < Spree::BaseController
 
   def accurate_title
     @taxon ? @taxon.name : nil
+  end
+
+  def load_taxon
+    @taxon = Taxon.find_by_permalink!(params[:id])
   end
 
 end

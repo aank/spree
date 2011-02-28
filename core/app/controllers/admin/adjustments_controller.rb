@@ -1,11 +1,17 @@
 class Admin::AdjustmentsController < Admin::BaseController
 
-  before_filter :load_order, :only => [:index, :new, :create, :edit, :update]
-  before_filter :load_adjustment, :only => [:edit, :update]
+  before_filter :load_order, :only => [:index, :new, :create, :edit, :update, :destroy]
+  before_filter :load_adjustment, :only => [:edit, :update, :destroy]
 
-  resource_controller
-  belongs_to :order
-  destroy.success.wants.js { @order.reload && render_js_for_destroy }
+  def destroy
+    @adjustment.destroy
+    respond_to do |format|
+      format.js {
+        @order.reload
+        render_js_for_destroy
+      }
+    end
+  end
 
   def index
     render
@@ -39,7 +45,7 @@ class Admin::AdjustmentsController < Admin::BaseController
   private
 
   def load_order
-    @order = Order.find_by_number(params[:order_id])
+    @order = Order.find_by_number!(params[:order_id])
   end
 
   def load_adjustment

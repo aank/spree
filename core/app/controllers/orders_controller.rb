@@ -1,9 +1,11 @@
 class OrdersController < Spree::BaseController
 
+  before_filter :load_order, :only => [:show]
+
   helper :products
 
   def show
-    @order = Order.find_by_number(params[:id])
+    render
   end
 
   def update
@@ -58,4 +60,11 @@ class OrdersController < Spree::BaseController
   def accurate_title
     I18n.t(:shopping_cart)
   end
+
+  private
+
+  def load_order
+    @order = Order.find_by_number(params[:id])
+  end
+
 end

@@ -1,5 +1,4 @@
 class Admin::ReportsController < Admin::BaseController
-  before_filter :load_data
 
   AVAILABLE_REPORTS = {
     :sales_total => {:name => "Sales Total", :description => "Sales Total For All Orders"}
@@ -36,11 +35,6 @@ class Admin::ReportsController < Admin::BaseController
     @item_total = @search.sum(:item_total)
     @adjustment_total = @search.sum(:adjustment_total)
     @sales_total = @search.sum(:total)
-  end
-
-  private
-  def load_data
-
   end
 
 end
