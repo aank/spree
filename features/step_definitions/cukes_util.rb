@@ -1,3 +1,23 @@
+Given /^existing (.*) records are deleted$/ do |type|
+  if type == 'zone'
+    Zone.delete_all
+  elsif type == 'user'
+    User.delete_all
+  end
+end
+
+When /^I follow "([^"]*)" and click OK$/ do |text|
+  page.evaluate_script("window.alert = function(msg) { return true; }")
+  page.evaluate_script("window.confirm = function(msg) { return true; }")
+  When %{I follow "#{text}"}
+end
+
+When /^I click first link from selector "(.*)" and click OK$/ do |selector|
+  page.evaluate_script("window.alert = function(msg) { return true; }")
+  page.evaluate_script("window.confirm = function(msg) { return true; }")
+  page.first(selector).click
+end
+
 When /^I confirm a js popup on the next step$/ do
   page.evaluate_script("window.alert = function(msg) { return true; }")
   page.evaluate_script("window.confirm = function(msg) { return true; }")

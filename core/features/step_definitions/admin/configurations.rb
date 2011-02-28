@@ -29,13 +29,6 @@ Then /^I should see listing states tabular attributes$/ do
   data[1].should == State.limit(1).order('name asc').to_a.first.abbr
 end
 
-Given /^existing (.*) records are deleted$/ do |type|
-  if type == 'zone'
-    Zone.delete_all
-  elsif type == 'user'
-    User.delete_all
-  end
-end
 
 Then /^I should see listing zones tabular attributes with (.*)$/ do |order|
   output = tableish('table#listing_zones tr', 'td,th')
