@@ -27,7 +27,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #--
 require 'rails/all'
-
+require 'rails/generators'
 require 'state_machine'
 require 'paperclip'
 require 'stringex'
@@ -76,6 +76,7 @@ end
 require 'spree_core/version'
 
 require 'spree_core/railtie'
+require 'generators/spree_core/extension/extension_generator'
 require 'generators/spree_core/site/site_generator'
 require 'generators/spree_core/dummy/dummy_generator'
 require 'generators/spree_core/sandbox/sandbox_generator'
