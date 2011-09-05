@@ -27,6 +27,7 @@ module Spree
       empty_directory "#{file_name}/db"
 
       directory "lib", "#{file_name}/lib"
+      directory "script", "#{file_name}/script"
 
       empty_directory "#{file_name}/spec"
 
