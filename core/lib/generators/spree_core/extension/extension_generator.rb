@@ -5,13 +5,8 @@ class SpreeCore::ExtensionGenerator < Rails::Generators::NamedBase
   desc "Creates new Spree extension"
 
   source_root File.expand_path("../templates", __FILE__)
-  #def self.source_paths
-    #paths = self.superclass.source_paths
-    #paths << File.expand_path('../templates', __FILE__)
-    #paths.flatten
-  #end
 
-   def create_root_files
+  def create_root_files
     empty_directory file_name
     empty_directory "#{file_name}/config"
     empty_directory "#{file_name}/db"
@@ -21,6 +16,7 @@ class SpreeCore::ExtensionGenerator < Rails::Generators::NamedBase
     template "gitignore", "#{file_name}/.gitignore"
     template "extension.gemspec", "#{file_name}/#{file_name}.gemspec"
     template "Versionfile", "#{file_name}/Versionfile"
+    template "Gemfile", "#{file_name}/Gemfile"
   end
 
   def create_app_dirs
@@ -40,12 +36,6 @@ class SpreeCore::ExtensionGenerator < Rails::Generators::NamedBase
   def misc_stuff
     template "routes.rb", "#{file_name}/config/routes.rb"
     template "spec_helper.rb", "#{file_name}/spec/spec_helper.rb"
-  end
-
-
-  protected
-  def plugin_dir(join=nil)
-    file_name
   end
 
 end
