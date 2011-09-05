@@ -40,6 +40,7 @@ module Spree
       template "Gemfile", "#{file_name}/Gemfile"
       template "routes.rb", "#{file_name}/config/routes.rb"
       template "spec_helper.rb", "#{file_name}/spec/spec_helper.rb"
+      template "rspec", "#{file_name}/.rspec"
     end
 
     no_tasks do
