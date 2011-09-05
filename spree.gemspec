@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.files        = Dir['README.md', 'lib/**/*']
   s.require_path = 'lib'
   s.requirements << 'none'
-
+  s.executables  = %w(spree)
   s.required_ruby_version     = '>= 1.8.7'
   s.required_rubygems_version = ">= 1.3.6"
 
