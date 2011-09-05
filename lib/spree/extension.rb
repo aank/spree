@@ -16,8 +16,19 @@ module Spree
       self.class_name = file_name.classify
 
       empty_directory file_name
+
+      directory "app", "#{file_name}/app"
+
+      empty_directory "#{file_name}/app/controllers"
+      empty_directory "#{file_name}/app/helpers"
+      empty_directory "#{file_name}/app/models"
+      empty_directory "#{file_name}/app/views"
       empty_directory "#{file_name}/config"
       empty_directory "#{file_name}/db"
+
+      directory "lib", "#{file_name}/lib"
+
+      empty_directory "#{file_name}/spec"
 
       template "LICENSE", "#{file_name}/LICENSE"
       template "Rakefile", "#{file_name}/Rakefile"
@@ -26,17 +37,6 @@ module Spree
       template "extension.gemspec", "#{file_name}/#{file_name}.gemspec"
       template "Versionfile", "#{file_name}/Versionfile"
       template "Gemfile", "#{file_name}/Gemfile"
-
-      empty_directory "#{file_name}/app"
-      empty_directory "#{file_name}/app/assets"
-      empty_directory "#{file_name}/app/controllers"
-      empty_directory "#{file_name}/app/helpers"
-      empty_directory "#{file_name}/app/models"
-      empty_directory "#{file_name}/app/views"
-      empty_directory "#{file_name}/spec"
-
-      directory "lib", "#{file_name}/lib"
-
       template "routes.rb", "#{file_name}/config/routes.rb"
       template "spec_helper.rb", "#{file_name}/spec/spec_helper.rb"
     end
