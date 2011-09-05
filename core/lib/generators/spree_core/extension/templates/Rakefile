@@ -1,23 +1,31 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rake/packagetask'
+require 'rubygems/package_task'
+require 'rspec/core/rake_task'
+require 'cucumber/rake/task'
+require 'spree_core/testing_support/common_rake'
 
-desc 'Default: run unit tests.'
-task :default => :test
+RSpec::Core::RakeTask.new
+Cucumber::Rake::Task.new
 
-desc 'Test the <%= file_name %> plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
+task :default => [:spec, :cucumber ]
+
+spec = eval(File.read('<%=file_name%>.gemspec'))
+
+Gem::PackageTask.new(spec) do |p|
+  p.gem_spec = spec
 end
 
-desc 'Generate documentation for the <%= file_name %> plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = '<%= class_name %>'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+desc "Release to gemcutter"
+task :release => :package do
+  require 'rake/gemcutter'
+  Rake::Gemcutter::Tasks.new(spec).define
+  Rake::Task['gem:push'].invoke
+end
+
+desc "Generates a dummy app for testing"
+task :test_app do
+  ENV['LIB_NAME'] = '<%=file_name%>'
+  Rake::Task['common:test_app'].invoke
 end
