@@ -1,6 +1,6 @@
 require "rails/generators/rails/plugin/plugin_generator"
 
-class SpreeCore::ExtensionGenerator < Rails::Generators::NamedBase
+class Spree::ExtensionGenerator < Rails::Generators::NamedBase
 
   desc "Creates new Spree extension"
 
