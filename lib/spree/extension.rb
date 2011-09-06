@@ -39,7 +39,7 @@ module Spree
       template "Versionfile", "#{file_name}/Versionfile"
       template "routes.rb", "#{file_name}/config/routes.rb"
       template "Gemfile", "#{file_name}/Gemfile" unless integrated
-      template "spec_helper.rb", "#{file_name}/spec/spec_helper.rb"
+      template "spec_helper.rb.tt", "#{file_name}/spec/spec_helper.rb"
       template "rspec", "#{file_name}/.rspec"
 
       if integrated
