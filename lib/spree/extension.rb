@@ -37,8 +37,8 @@ module Spree
       template "gitignore", "#{file_name}/.gitignore"
       template "extension.gemspec", "#{file_name}/#{file_name}.gemspec"
       template "Versionfile", "#{file_name}/Versionfile"
-      template "Gemfile", "#{file_name}/Gemfile"
       template "routes.rb", "#{file_name}/config/routes.rb"
+      template "Gemfile", "#{file_name}/Gemfile" if standalone
       template "spec_helper.rb", "#{file_name}/spec/spec_helper.rb"
       template "rspec", "#{file_name}/.rspec"
     end
@@ -56,6 +56,12 @@ module Spree
     no_tasks do
       # Class Name (ex. PaypalExpress)
       attr_accessor :class_name
+    end
+
+    protected
+    def standalone
+      gemfile = File.expand_path("Gemfile", Dir.pwd)
+      !File.exist?(gemfile)
     end
   end
 end
