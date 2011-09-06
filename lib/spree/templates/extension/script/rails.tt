@@ -5,6 +5,8 @@
 ENGINE_PATH = File.expand_path('../..',  __FILE__)
 load File.expand_path('../../spec/dummy/script/rails',  __FILE__)
 <% else %>
-ENGINE_PATH = Dir.pwd
-load File.expand_path('../../../script/rails',  __FILE__)
+ENGINE_PATH = File.expand_path('../..',  __FILE__)
+APP_PATH = File.expand_path('../../../config/application',  __FILE__)
+require File.expand_path('../../../config/boot',  __FILE__)
+require 'rails/commands'
 <% end %>
