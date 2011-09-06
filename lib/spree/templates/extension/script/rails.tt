@@ -5,5 +5,5 @@ ENGINE_PATH = File.expand_path('../..',  __FILE__)
 <% if standalone %>
 load File.expand_path('../../spec/dummy/script/rails',  __FILE__)
 <% else %>
-load File.expand_path('../script/rails',  __FILE__)
+load File.expand_path('../',  __FILE__)
 <% end %>
