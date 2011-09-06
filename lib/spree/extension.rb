@@ -11,7 +11,7 @@ module Spree
 
       class_path = name.include?('/') ? name.split('/') : name.split('::')
       class_path.map! { |m| m.underscore }
-      self.file_name = 'spree_' + class_path.pop
+      self.file_name = 'spree_' + class_path.pop.gsub('spree_', '')
       self.human_name = name.titleize
       self.class_name = file_name.classify
 
