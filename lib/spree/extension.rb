@@ -38,9 +38,15 @@ module Spree
       template "extension.gemspec", "#{file_name}/#{file_name}.gemspec"
       template "Versionfile", "#{file_name}/Versionfile"
       template "routes.rb", "#{file_name}/config/routes.rb"
-      template "Gemfile", "#{file_name}/Gemfile" if standalone
+      template "Gemfile", "#{file_name}/Gemfile" unless integrated
       template "spec_helper.rb", "#{file_name}/spec/spec_helper.rb"
       template "rspec", "#{file_name}/.rspec"
+
+      if integrated
+        append_to_file(gemfile) do
+          "\ngem '#{file_name}', :path => '#{file_name}'"
+        end
+      end
     end
 
     no_tasks do
@@ -59,9 +65,12 @@ module Spree
     end
 
     protected
-    def standalone
-      gemfile = File.expand_path("Gemfile", Dir.pwd)
-      !File.exist?(gemfile)
+    def gemfile
+      File.expand_path("Gemfile", Dir.pwd)
+    end
+    # extension is integrated with an existing rails app (as opposed to standalone repository)
+    def integrated
+      File.exist?(gemfile)
     end
   end
 end
