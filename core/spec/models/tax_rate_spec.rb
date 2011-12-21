@@ -38,6 +38,21 @@ describe Spree::TaxRate do
       order.stub :tax_zone => zone
       Spree::TaxRate.match(order).should == [rate1, rate2]
     end
+
+    context "when the tax_zone is contained within a rate zone" do
+      before do
+        sub_zone = Factory(:zone, :name => 'sub_zone')
+        order.stub :tax_zone => sub_zone
+        zone.stub :contains? => true
+        @rate = Spree::TaxRate.create :amount => 1, :zone => zone, :tax_category => tax_category,
+                                      :calculator => calculator
+      end
+
+      it "should return the rate zone" do
+        Spree::TaxRate.match(order).should == [@rate]
+      end
+    end
+
   end
 
   context "#adjust" do
