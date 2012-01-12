@@ -1,0 +1,18 @@
+require 'rubygems'
+require 'rake'
+require 'rake/testtask'
+require 'rake/packagetask'
+require 'rubygems/package_task'
+
+Bundler::GemHelper.install_tasks
+
+spec = eval(File.read('spree_cmd.gemspec'))
+Gem::PackageTask.new(spec) do |p|
+  p.gem_spec = spec
+end
+
+desc "Release to gemcutter"
+task :release do
+  version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
+  cmd = "cd pkg && gem push spree_cmd-#{version}.gem"; puts cmd; system cmd
+end

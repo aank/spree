@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.email        = 'sean@spreecommerce.com'
   s.homepage     = 'http://spreecommerce.com'
 
+  s.add_dependency 'spree_cmd', version
   s.add_dependency 'spree_core', version
   s.add_dependency 'spree_auth', version
   s.add_dependency 'spree_api', version
