@@ -70,6 +70,13 @@ module Spree
 
     alias :options :product_option_types
 
+    # Temporary hack to address #1008. Ultimately we should consider replacing the delegate stuff with
+    # the Ruby/Rails standard way but we're too close to 1.0 to tamper with that now.
+    def initialize
+      super
+      self.master ||= Variant.new
+    end
+
     def to_param
       return permalink if permalink.present?
       name.to_url
